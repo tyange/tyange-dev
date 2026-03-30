@@ -8,9 +8,9 @@ function formatPublishedAt(value: string) {
     return value;
   }
 
-  return new Intl.DateTimeFormat("en", {
+  return new Intl.DateTimeFormat("ko-KR", {
     year: "numeric",
-    month: "short",
+    month: "long",
     day: "numeric",
   }).format(date);
 }
@@ -36,19 +36,19 @@ export default async function Home() {
             </p>
             {isPortfolioFallback ? (
               <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.22em] text-black/35">
-                Showing local draft because the CMS API is unreachable
+                CMS API에 연결할 수 없어 로컬 초안을 표시하고 있습니다
               </p>
             ) : null}
           </div>
           <nav className="hidden gap-6 font-mono text-[11px] uppercase tracking-[0.24em] text-black/45 sm:flex">
             <a href="#work" className="transition hover:text-black">
-              Work
+              작업
             </a>
             <a href="#writing" className="transition hover:text-black">
-              Writing
+              기록
             </a>
             <a href="#about" className="transition hover:text-black">
-              About
+              소개
             </a>
           </nav>
         </header>
@@ -101,7 +101,7 @@ export default async function Home() {
             </div>
             <div className="rounded-[1.5rem] border border-black/6 bg-white p-5">
               <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-black/42">
-                Principle
+                원칙
               </p>
               <p className="mt-4 text-2xl font-medium tracking-[-0.05em] text-black">
                 {content.guiding_principle}
@@ -116,10 +116,10 @@ export default async function Home() {
         >
           <div className="space-y-3">
             <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-black/42">
-              Selected work
+              주요 작업
             </p>
             <p className="max-w-xs text-sm leading-7 text-black/56">
-              Projects pulled from the portfolio document stored in the CMS API.
+              CMS API에 저장된 포트폴리오 문서를 기준으로 구성한 프로젝트들입니다.
             </p>
           </div>
           <div className="grid gap-4">
@@ -235,7 +235,7 @@ export default async function Home() {
               ))
             ) : (
               <div className="rounded-[1.5rem] border border-dashed border-black/12 bg-white/60 p-5 text-sm leading-7 text-black/56">
-                No `dev` tagged posts are available yet from the CMS API.
+                CMS API에서 `dev` 태그 글을 아직 찾지 못했습니다.
               </div>
             )}
           </div>
@@ -266,7 +266,7 @@ export default async function Home() {
           <div className="grid gap-4 rounded-[1.75rem] border border-black/8 bg-[#161616] p-6 text-white">
             <div>
               <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-white/42">
-                Services
+                할 수 있는 일
               </p>
               <div className="mt-3 space-y-2">
                 {content.about.services.map((service) => (
@@ -278,7 +278,7 @@ export default async function Home() {
             </div>
             <div className="border-t border-white/10 pt-4">
               <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-white/42">
-                Strengths
+                강점
               </p>
               <div className="mt-3 space-y-2">
                 {content.about.strengths.map((strength) => (
@@ -290,7 +290,7 @@ export default async function Home() {
             </div>
             <div className="border-t border-white/10 pt-4">
               <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-white/42">
-                Contact
+                연락
               </p>
               <a
                 href={`mailto:${content.identity.email}`}
@@ -305,7 +305,7 @@ export default async function Home() {
                   rel="noreferrer"
                   className="rounded-full border border-white/12 px-3 py-2 font-mono text-[11px] uppercase tracking-[0.18em] text-white/70 transition hover:text-white"
                 >
-                  GitHub
+                  깃허브
                 </a>
                 <a
                   href={content.identity.blog_url}
@@ -313,7 +313,7 @@ export default async function Home() {
                   rel="noreferrer"
                   className="rounded-full border border-white/12 px-3 py-2 font-mono text-[11px] uppercase tracking-[0.18em] text-white/70 transition hover:text-white"
                 >
-                  Blog
+                  블로그
                 </a>
                 {content.identity.velog_url ? (
                   <a

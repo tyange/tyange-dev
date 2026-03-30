@@ -15,7 +15,7 @@ const ibmPlexMono = IBM_Plex_Mono({
 
 export const metadata: Metadata = {
   title: "TYANGE DEV",
-  description: "Minimal portfolio for a frontend developer focused on calm, precise interfaces.",
+  description: "차분한 인터페이스와 구조적인 프론트엔드 작업을 담은 개발자 포트폴리오.",
 };
 
 const rootClassName = [
@@ -31,7 +31,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${rootClassName} h-full antialiased`}>
+    <html lang="ko" className={`${rootClassName} h-full antialiased`}>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );

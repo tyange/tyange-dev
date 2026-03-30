@@ -99,7 +99,7 @@ function getApiBaseUrl() {
   return (
     process.env.NEXT_PUBLIC_TYANGE_CMS_API_BASE ??
     process.env.CMS_API_BASE_URL ??
-    "http://127.0.0.1:8080"
+    "https://tyange.com/api/cms"
   ).replace(/\/$/, "");
 }
 
