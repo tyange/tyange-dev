@@ -15,9 +15,9 @@ export const portfolioDraft: PortfolioDocument = {
   },
   hero: {
     eyebrow: "프론트엔드 개발자 / CMS 중심 사이드 프로젝트 / 서울",
-    headline: "차분한 화면 뒤에 단단한 구조를 설계합니다.",
+    headline: "보이는 것 너머의 구조를 오래 다듬습니다.",
     summary:
-      "겉으로는 조용하고 매끈하지만, 안쪽에는 분명한 구조와 운영 흐름이 살아 있는 화면을 만드는 일을 좋아합니다. 최근에는 Nuxt 블로그, Rust 기반 CMS API, 내부 CMS, Solid 대시보드를 하나의 퍼블리싱 흐름으로 연결하는 작업을 이어가고 있습니다.",
+      "블로그, CMS, API, 대시보드를 하나의 운영 흐름으로 연결하는 프론트엔드 작업을 합니다.",
     primary_cta: {
       label: "GitHub 보기",
       url: "https://github.com/tyange",
@@ -37,6 +37,18 @@ export const portfolioDraft: PortfolioDocument = {
       title: "Next.js, Nuxt, Solid, Rust, Poem, Tailwind CSS, SQLite",
     },
   ],
+  metrics: [
+    {
+      value: "2",
+      unit: "개사",
+      description: "프론트엔드 개발자로 재직한 이력",
+    },
+    {
+      value: "3+",
+      unit: "년",
+      description: "서비스 UI와 내부 도구를 설계하고 구현한 시간",
+    },
+  ],
   guiding_principle:
     "미니멀은 비워 두는 일이 아니라, 느슨한 부분을 끝까지 다듬고 난 뒤에 남는 결과라고 생각합니다.",
   featured_projects: [
@@ -45,11 +57,11 @@ export const portfolioDraft: PortfolioDocument = {
       title: "tyange-blog",
       period: "Nuxt 4 / 콘텐츠 플랫폼",
       summary:
-        "마크다운 작성 경험, RSS 생성, 태그 필터링, CMS API 기반 재배포 흐름까지 연결한 개인 블로그입니다. 글을 쓰는 경험과 읽는 경험이 모두 가볍고 자연스럽게 이어지도록 다듬었습니다.",
+        "마크다운 발행, RSS, 태그 필터링, CMS 연동 재배포까지 이어지는 개인 블로그입니다.",
       stack: ["Nuxt 4", "TypeScript", "Tailwind CSS 4", "Nuxt MDC", "Pinia"],
       highlights: [
-        "GitHub Actions를 통해 Lightsail에 배포되고, CMS에서 콘텐츠가 바뀌면 RSS와 정적 결과물이 함께 다시 생성됩니다.",
-        "마크다운 본문, 코드 블록, 포스트 메타데이터가 읽는 흐름을 방해하지 않도록 화면 밀도를 조절했습니다.",
+        "마크다운 포스트, 코드 블록, 태그 필터, RSS 피드를 직접 구성했습니다.",
+        "CMS 변경 후 블로그 재배포와 RSS 갱신이 이어지도록 운영 흐름을 연결했습니다.",
       ],
       links: [
         {
@@ -67,11 +79,11 @@ export const portfolioDraft: PortfolioDocument = {
       title: "tyange-cms-api",
       period: "Rust / Poem / 콘텐츠 인프라",
       summary:
-        "포스트, 인증, 이미지 업로드, RSS 연동, 예산 관리, 알림, 그리고 이 dev 페이지를 위한 포트폴리오 데이터까지 담당하는 Rust 기반 API입니다.",
+        "포스트, 인증, 업로드, 알림, 예산, 포트폴리오 문서를 다루는 Rust API입니다.",
       stack: ["Rust", "Poem", "SQLx", "SQLite", "JWT"],
       highlights: [
-        "콘텐츠 운영 기능과 개인 운영 도구를 하나의 API 안에서 자연스럽게 공존하도록 설계했습니다.",
-        "공개 포스트가 바뀌면 블로그 재배포가 이어지도록 후속 흐름까지 고려해 구성했습니다.",
+        "JWT 인증, 이미지 업로드, 포스트 CRUD, 포트폴리오 CRUD를 직접 구현했습니다.",
+        "RSS poller, Web Push, 예산 API, API Key 기반 호출 흐름을 함께 운영합니다.",
       ],
       links: [
         {
@@ -85,11 +97,11 @@ export const portfolioDraft: PortfolioDocument = {
       title: "tyange-cms",
       period: "Nuxt 4 / 내부 CMS",
       summary:
-        "블로그 운영과 개인 관리 흐름에 맞춘 전용 CMS 클라이언트입니다. 포스트 작성, 이미지 업로드, 태그 관리, 예산 관련 작업이 하나의 관리자 화면 안에서 이어집니다.",
+        "블로그 운영과 개인 관리 작업을 한 화면에서 처리하는 전용 CMS입니다.",
       stack: ["Nuxt 4", "Vue 3", "TypeScript", "Tailwind CSS 4"],
       highlights: [
-        "범용 CMS보다는 실제 운영자 한 사람의 동선에 맞춘 좁고 빠른 경험을 목표로 만들었습니다.",
-        "포스트 CRUD, 이미지 업로드, 태그 조회, 예산 관리가 한 인터페이스 안에서 자연스럽게 연결됩니다.",
+        "Google 로그인, 관리자 로그인, 포스트 CRUD, 이미지 업로드를 구현했습니다.",
+        "태그 조회, 예산 관리, 카드 사용내역 엑셀 업로드 흐름을 연결했습니다.",
       ],
       links: [
         {
@@ -103,11 +115,11 @@ export const portfolioDraft: PortfolioDocument = {
       title: "tyange-dashboard",
       period: "Solid / 운영 대시보드",
       summary:
-        "JWT 기반 관리 기능을 빠르게 다루기 위한 운영 대시보드입니다. 활성 예산, 소비 기록, API 키, 알림, 피드 관리 같은 기능을 가볍게 다룰 수 있게 만들었습니다.",
+        "PWA와 Web Push를 실험하기 위해 만든 Solid 기반 대시보드로, 실제로 브라우저에서 Web Push를 수신할 수 있도록 구성했습니다.",
       stack: ["SolidJS", "TypeScript", "Vite", "CMS API"],
       highlights: [
-        "빠른 실행감과 운영 효율을 우선하는 화면으로 구성했고, 배포와 환경 변수 검증까지 포함해 안정성을 챙겼습니다.",
-        "CMS와 같은 백엔드 계약을 공유하지만, 실제 사용 맥락은 다른 별도의 작업 화면으로 정리했습니다.",
+        "PWA, Service Worker, Web Push 구독/해제, RSS 구독 관리 화면을 구현했습니다.",
+        "Google 로그인, 예산 대시보드, 소비 기록, API Key 관리 화면을 연결했습니다.",
       ],
       links: [
         {
@@ -121,8 +133,8 @@ export const portfolioDraft: PortfolioDocument = {
     eyebrow: "소개",
     headline: "화면의 완성도와 그 뒤의 구조가 함께 좋아지는 일을 선호합니다.",
     paragraphs: [
-      "제가 만드는 사이드 프로젝트는 단순한 단일 페이지에 머물지 않는 경우가 많습니다. 콘텐츠 API, 내부 CMS, 퍼블릭 블로그, 운영 대시보드가 서로 연결되어 있어야 하고, 그 연결감까지 하나의 경험처럼 느껴져야 한다고 생각합니다.",
-      "그래서 저는 컴포넌트 자체보다도 퍼블리싱 흐름, 배포 과정의 마찰, 데이터 계약, 그리고 화면의 리듬을 결정하는 작은 상호작용까지 함께 봅니다.",
+      "단일 페이지보다 연결된 제품 흐름을 선호합니다. 블로그, CMS, API, 대시보드가 하나의 운영 경험처럼 이어져야 한다고 생각합니다.",
+      "화면 구현뿐 아니라 데이터 계약, 배포 흐름, 실제 운영 동선까지 같이 설계하는 편입니다.",
     ],
     services: [
       "제품 화면과 콘텐츠 화면을 위한 프론트엔드 아키텍처 설계",
@@ -140,6 +152,6 @@ export const portfolioDraft: PortfolioDocument = {
     eyebrow: "기록",
     title: "dev 태그가 붙은 글",
     description:
-      "이 섹션은 `/posts/search-with-tags?include=dev` 응답을 그대로 사용합니다. CMS API에 연결되지 않으면 포트폴리오 초안만 우선 표시됩니다.",
+      "`/posts/search-with-tags?include=dev` 응답을 그대로 표시합니다.",
   },
 };

@@ -33,6 +33,12 @@ export type PortfolioHighlightCard = {
   title: string;
 };
 
+export type PortfolioMetric = {
+  value: string;
+  unit: string;
+  description: string;
+};
+
 export type PortfolioProject = {
   slug: string;
   title: string;
@@ -57,16 +63,24 @@ export type PortfolioWritingSection = {
   description: string;
 };
 
+export type PortfolioCurrentItem = {
+  name: string;
+  summary: string;
+  stack: string[];
+};
+
 export type PortfolioDocument = {
   slug: string;
   version: number;
   identity: PortfolioIdentity;
   hero: PortfolioHero;
   highlight_cards: PortfolioHighlightCard[];
+  metrics?: PortfolioMetric[];
   guiding_principle: string;
   featured_projects: PortfolioProject[];
   about: PortfolioAbout;
   writing: PortfolioWritingSection;
+  currently_building?: PortfolioCurrentItem[];
 };
 
 export type PortfolioResponse = {

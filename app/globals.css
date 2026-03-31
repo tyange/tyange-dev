@@ -1,15 +1,15 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f3f0ea;
-  --foreground: #101010;
+  --background: #f0ede8;
+  --foreground: #111111;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-manrope);
-  --font-mono: var(--font-ibm-plex-mono);
+  --font-sans: var(--font-pretendard);
+  --font-mono: var(--font-pretendard);
 }
 
 * {
@@ -24,7 +24,9 @@ body {
   min-height: 100vh;
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-manrope), sans-serif;
+  font-family: var(--font-pretendard), sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }
 
 a {
