@@ -141,7 +141,8 @@ function getApiBaseUrl() {
 
 async function fetchCms<T>(path: string) {
   const response = await fetch(`${getApiBaseUrl()}${path}`, {
-    cache: "no-store",
+    // Static export should resolve CMS content during the build.
+    cache: "force-cache",
   });
 
   if (!response.ok) {
