@@ -213,10 +213,6 @@ export const portfolioDraft: PortfolioDocument = {
               "관련기술: Vite, TypeScript, Jenkins",
             ],
           },
-          {
-            title: "운영 서비스 지속 개선",
-            bullets: ["실제 운영 서비스 대상, 유저 피드백 기반 지속 개선 중"],
-          },
         ],
       },
     ],
