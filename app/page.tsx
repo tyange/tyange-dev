@@ -160,7 +160,7 @@ export default async function Home() {
 
       <div className="mx-auto flex w-full max-w-6xl flex-col px-6 sm:px-10 lg:px-12">
         <section className="pt-3 pb-12">
-          <div className="max-w-4xl">
+          <div className="max-w-[64rem]">
             <div className="flex items-baseline gap-3 text-black">
               <p className="text-2xl font-bold tracking-[-0.05em]">
                 {careerProfile.summaryLabel}
@@ -169,8 +169,8 @@ export default async function Home() {
             </div>
           </div>
 
-          <div className="mt-8 max-w-4xl">
-            <div className="space-y-12">
+          <div className="mt-8 max-w-[64rem]">
+            <div className="space-y-10">
               {careerProfile.companies.map((company) => (
                 <section key={company.company} className="min-w-0 space-y-2">
                   <h1 className="text-[1.05rem] font-bold tracking-[-0.02em] text-black">
@@ -183,9 +183,9 @@ export default async function Home() {
                     {company.position ? <span>{company.position}</span> : null}
                   </div>
 
-                  <div className="mt-6 space-y-8 pl-5 sm:pl-8">
+                  <div className="mt-6 divide-y divide-black/[0.06] pl-5 sm:pl-8">
                     {company.items.map((item) => (
-                      <section key={`${company.company}-${item.title}`} className="space-y-2">
+                      <section key={`${company.company}-${item.title}`} className="space-y-2 py-5 first:pt-0 last:pb-0">
                         <h2 className="text-[1.05rem] font-bold tracking-[-0.02em] text-black">
                           {item.title}
                         </h2>
@@ -194,7 +194,7 @@ export default async function Home() {
                         ) : null}
                         <div className="space-y-2 pt-1">
                           {item.bullets.map((bullet) => (
-                            <p key={bullet} className="max-w-3xl pl-4 text-sm leading-7 text-black/62">
+                            <p key={bullet} className="max-w-4xl pl-4 text-sm leading-7 text-black/62">
                               - {bullet}
                             </p>
                           ))}
@@ -213,11 +213,11 @@ export default async function Home() {
           className="grid gap-10 pb-14 lg:grid-cols-[15rem_minmax(0,1fr)]"
         >
           <SectionLabel title="작업" />
-          <div className="space-y-4">
+          <div className="divide-y divide-black/[0.06]">
             {content.featured_projects.map((project) => (
               <article
                 key={project.slug}
-                className="py-2"
+                className="py-5 first:pt-0"
               >
                 <div className="space-y-3">
                   <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
@@ -263,23 +263,18 @@ export default async function Home() {
           className={`grid gap-10 lg:grid-cols-[15rem_minmax(0,1fr)] ${currentItems.length > 0 ? "pb-14" : "pb-0"}`}
         >
           <SectionLabel title="기록" />
-          <div className="space-y-3">
+          <div className="divide-y divide-black/[0.06]">
             {devPosts.length > 0 ? (
               devPosts.map((post) => (
                 <article
                   key={post.post_id}
-                  className="cursor-pointer py-4"
+                  className="group cursor-pointer py-5 first:pt-0"
                 >
-                  <div className="space-y-2">
-                    <div className="flex items-start gap-4">
-                      <span className="pt-1 text-sm text-black/32">•</span>
-                      <div className="space-y-2">
-                        <h3 className="text-xl font-bold tracking-[-0.05em] text-black">
-                          {post.title}
-                        </h3>
-                        <p className="max-w-3xl text-sm leading-7 text-black/60">{post.description}</p>
-                      </div>
-                    </div>
+                  <div className="space-y-1.5">
+                    <h3 className="text-[1.1rem] font-bold tracking-[-0.04em] text-black transition group-hover:text-black/72">
+                      {post.title}
+                    </h3>
+                    <p className="max-w-2xl text-sm leading-7 text-black/54">{post.description}</p>
                   </div>
                 </article>
               ))
@@ -294,11 +289,11 @@ export default async function Home() {
         {currentItems.length > 0 ? (
           <section className="grid gap-10 pb-0 lg:grid-cols-[15rem_minmax(0,1fr)]">
             <SectionLabel title="현재 작업" />
-            <div className="space-y-4">
+            <div className="divide-y divide-black/[0.06]">
               {currentItems.map((item) => (
                 <article
                   key={item.name}
-                  className="py-2"
+                  className="py-5 first:pt-0"
                 >
                   <div className="space-y-3">
                     <h3 className="text-2xl font-bold tracking-[-0.05em] text-black">{item.name}</h3>
