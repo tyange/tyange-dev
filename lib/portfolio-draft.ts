@@ -154,4 +154,71 @@ export const portfolioDraft: PortfolioDocument = {
     description:
       "`/posts/search-with-tags?include=dev` 응답을 그대로 표시합니다.",
   },
+  career: {
+    summary_label: "경력",
+    summary_value: "3년 8개월",
+    companies: [
+      {
+        company: "(주)미트박스글로벌",
+        period: "2026.01 - 재직 중",
+        employment_type: "정규직",
+        role: "프론트엔드 개발",
+        position: "",
+        items: [
+          {
+            title: "레거시 구조 현대화",
+            bullets: [
+              "기존 화면 구조와 스타일 체계를 점진적으로 정리하며, 더 나은 유지보수와 확장이 가능하도록 모던한 프론트엔드 방식으로 개선했습니다.",
+              "공용 컴포넌트 분리, 스타일 구조 재정비, API 응답 기준 화면 개편을 통해 레거시 의존도를 줄이는 작업을 이어가고 있습니다.",
+              "관련기술: Vue3, Nuxt, TypeScript, React, Vite",
+            ],
+          },
+          {
+            title: "AI 활용 협업",
+            bullets: [
+              "AI에게 작업을 맡길 때 파일별 변경 사항, 필드 매핑, 현재 동작과 예외 상황을 먼저 구조화해 전달하는 방식으로 협업 효율을 높이고 있습니다.",
+              "Claude Code에 Figma, Playwright, Atlassian MCP를 연결해 디자인 확인, 코드 작성, 브라우저 검증, 이슈 문서화까지 하나의 흐름으로 처리하는 작업 방식을 구축했습니다.",
+              "새로운 도구를 빠르게 업무에 적용하고, 프롬프트를 구조적으로 정리해 전달하는 방식으로 구현 시간과 시행착오를 줄이는 데 강점이 있습니다.",
+              "관련기술: Claude Code, Figma MCP, Playwright MCP, Atlassian MCP, 프롬프트 설계",
+            ],
+          },
+        ],
+      },
+      {
+        company: "(주)오토위니",
+        period: "2022.08 - 2025.12",
+        employment_type: "정규직",
+        role: "프론트엔드 개발",
+        position: "주임",
+        items: [
+          {
+            title: "단독 프론트엔드 운영",
+            bullets: ["팀원 전원 퇴사 후 혼자서 서비스(React SPA) 유지보수 및 신규 기능 개발"],
+          },
+          {
+            title: "레거시 현대화 프로젝트",
+            bullets: [
+              "Spring + JSP에서 Vue3(차량 검색), Nuxt(경매 시스템)로 마이그레이션 수행",
+              "CRA + JS에서 Vite + TS 전환으로 빌드 속도 대폭 개선",
+              "jQuery 바닐라 JS 리팩토링",
+              "관련기술: Vue3, Nuxt, React, JavaScript, TypeScript, CRA, Vite, Spring, JSP",
+            ],
+          },
+          {
+            title: "팀 생산성 개선",
+            bullets: [
+              "Vite 도입으로 개발 환경 개선",
+              "TypeScript 전환으로 안정성 확보",
+              "Jenkins CI / CD 파이프라인 구성",
+              "관련기술: Vite, TypeScript, Jenkins",
+            ],
+          },
+          {
+            title: "운영 서비스 지속 개선",
+            bullets: ["실제 운영 서비스 대상, 유저 피드백 기반 지속 개선 중"],
+          },
+        ],
+      },
+    ],
+  },
 };

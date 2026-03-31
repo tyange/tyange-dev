@@ -69,6 +69,27 @@ export type PortfolioCurrentItem = {
   stack: string[];
 };
 
+export type PortfolioCareerItem = {
+  title: string;
+  period?: string | null;
+  bullets: string[];
+};
+
+export type PortfolioCareerCompany = {
+  company: string;
+  period: string;
+  employment_type: string;
+  role: string;
+  position: string;
+  items: PortfolioCareerItem[];
+};
+
+export type PortfolioCareerSection = {
+  summary_label: string;
+  summary_value: string;
+  companies: PortfolioCareerCompany[];
+};
+
 export type PortfolioDocument = {
   slug: string;
   version: number;
@@ -80,6 +101,7 @@ export type PortfolioDocument = {
   featured_projects: PortfolioProject[];
   about: PortfolioAbout;
   writing: PortfolioWritingSection;
+  career?: PortfolioCareerSection;
   currently_building?: PortfolioCurrentItem[];
 };
 
