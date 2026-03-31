@@ -1,32 +1,4 @@
 import { getDevPosts, getPortfolio } from "@/lib/cms-api";
-import { portfolioDraft } from "@/lib/portfolio-draft";
-
-function mergePortfolioContent(apiContent: (typeof portfolioDraft) | null | undefined) {
-  if (!apiContent) {
-    return portfolioDraft;
-  }
-
-  return {
-    ...portfolioDraft,
-    ...apiContent,
-    identity: apiContent.identity ?? portfolioDraft.identity,
-    hero: apiContent.hero ?? portfolioDraft.hero,
-    highlight_cards: apiContent.highlight_cards ?? portfolioDraft.highlight_cards,
-    metrics: apiContent.metrics ?? portfolioDraft.metrics,
-    guiding_principle: apiContent.guiding_principle ?? portfolioDraft.guiding_principle,
-    featured_projects: apiContent.featured_projects ?? portfolioDraft.featured_projects,
-    about: apiContent.about ?? portfolioDraft.about,
-    writing: apiContent.writing ?? portfolioDraft.writing,
-    career: apiContent.career
-      ? {
-          ...portfolioDraft.career!,
-          ...apiContent.career,
-          companies: apiContent.career.companies ?? portfolioDraft.career!.companies,
-        }
-      : portfolioDraft.career!,
-    currently_building: apiContent.currently_building ?? portfolioDraft.currently_building,
-  };
-}
 
 function SectionLabel({
   title,
@@ -68,9 +40,25 @@ export default async function Home() {
 
   const portfolioData = portfolio.status === "fulfilled" ? portfolio.value : null;
   const devPosts = posts.status === "fulfilled" ? posts.value : [];
-  const content = mergePortfolioContent(portfolioData?.content);
+  const content = portfolioData?.content;
+
+  if (!content) {
+    return (
+      <main className="min-h-screen bg-[var(--background)] px-6 py-16 text-[var(--foreground)] sm:px-10 lg:px-12">
+        <div className="mx-auto max-w-3xl space-y-3">
+          <h1 className="text-2xl font-bold tracking-[-0.05em] text-black">
+            포트폴리오 데이터를 불러오지 못했습니다.
+          </h1>
+          <p className="text-sm leading-7 text-black/56">
+            `tyange-cms-api`의 `/portfolio` 응답을 확인한 뒤 다시 배포해 주세요.
+          </p>
+        </div>
+      </main>
+    );
+  }
+
   const currentItems = content.currently_building ?? [];
-  const careerProfile = content.career ?? portfolioDraft.career!;
+  const careerProfile = content.career;
 
   return (
     <main className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
@@ -100,52 +88,56 @@ export default async function Home() {
 
       <div className="mx-auto flex w-full max-w-6xl flex-col px-6 sm:px-10 lg:px-12">
         <section className="pt-3 pb-12">
-          <div className="max-w-[64rem]">
-            <div className="flex items-baseline gap-3 text-black">
-              <p className="text-2xl font-bold tracking-[-0.05em]">
-                {careerProfile.summary_label}
-              </p>
-              <p className="text-sm text-black/48">{careerProfile.summary_value}</p>
-            </div>
-          </div>
+          {careerProfile ? (
+            <>
+              <div className="max-w-[64rem]">
+                <div className="flex items-baseline gap-3 text-black">
+                  <p className="text-2xl font-bold tracking-[-0.05em]">
+                    {careerProfile.summary_label}
+                  </p>
+                  <p className="text-sm text-black/48">{careerProfile.summary_value}</p>
+                </div>
+              </div>
 
-          <div className="mt-8 max-w-[64rem]">
-            <div className="space-y-10">
-              {careerProfile.companies.map((company) => (
-                <section key={company.company} className="min-w-0 space-y-2">
-                  <h1 className="text-[1.05rem] font-bold tracking-[-0.02em] text-black">
-                    {company.company}
-                  </h1>
-                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm font-medium text-black/48">
-                    <span>{company.period}</span>
-                    <span>{company.employment_type}</span>
-                    <span>{company.role}</span>
-                    {company.position ? <span>{company.position}</span> : null}
-                  </div>
+              <div className="mt-8 max-w-[64rem]">
+                <div className="space-y-10">
+                  {careerProfile.companies.map((company) => (
+                    <section key={company.company} className="min-w-0 space-y-2">
+                      <h1 className="text-[1.05rem] font-bold tracking-[-0.02em] text-black">
+                        {company.company}
+                      </h1>
+                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm font-medium text-black/48">
+                        <span>{company.period}</span>
+                        <span>{company.employment_type}</span>
+                        <span>{company.role}</span>
+                        {company.position ? <span>{company.position}</span> : null}
+                      </div>
 
-                  <div className="mt-6 divide-y divide-black/[0.06] pl-5 sm:pl-8">
-                    {company.items.map((item) => (
-                      <section key={`${company.company}-${item.title}`} className="space-y-2 py-5 first:pt-0 last:pb-0">
-                        <h2 className="text-[1.05rem] font-bold tracking-[-0.02em] text-black">
-                          {item.title}
-                        </h2>
-                        {item.period ? (
-                          <p className="text-sm font-medium text-black/48">{item.period}</p>
-                        ) : null}
-                        <div className="space-y-2 pt-1">
-                          {item.bullets.map((bullet) => (
-                            <p key={bullet} className="max-w-4xl pl-4 text-sm leading-7 text-black/62">
-                              - {bullet}
-                            </p>
-                          ))}
-                        </div>
-                      </section>
-                    ))}
-                  </div>
-                </section>
-              ))}
-            </div>
-          </div>
+                      <div className="mt-6 divide-y divide-black/[0.06] pl-5 sm:pl-8">
+                        {company.items.map((item) => (
+                          <section key={`${company.company}-${item.title}`} className="space-y-2 py-5 first:pt-0 last:pb-0">
+                            <h2 className="text-[1.05rem] font-bold tracking-[-0.02em] text-black">
+                              {item.title}
+                            </h2>
+                            {item.period ? (
+                              <p className="text-sm font-medium text-black/48">{item.period}</p>
+                            ) : null}
+                            <div className="space-y-2 pt-1">
+                              {item.bullets.map((bullet) => (
+                                <p key={bullet} className="max-w-4xl pl-4 text-sm leading-7 text-black/62">
+                                  - {bullet}
+                                </p>
+                              ))}
+                            </div>
+                          </section>
+                        ))}
+                      </div>
+                    </section>
+                  ))}
+                </div>
+              </div>
+            </>
+          ) : null}
         </section>
 
         <section
