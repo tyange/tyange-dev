@@ -55,7 +55,7 @@ const pretendard = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "TYANGE DEV",
+  title: "유태양 | Frontend Developer",
   description: "차분한 인터페이스와 구조적인 프론트엔드 작업을 담은 개발자 포트폴리오.",
 };
 
