@@ -1,3 +1,4 @@
+import { GitBranch } from "lucide-react";
 import { getDevPosts, getPortfolio } from "@/lib/cms-api";
 import { portfolioDraft } from "@/lib/portfolio-draft";
 
@@ -40,6 +41,20 @@ function SectionLabel({
       <h2 className="text-2xl font-bold tracking-[-0.05em] text-black">{title}</h2>
       {description ? <p className="max-w-xs text-sm leading-7 text-black/56">{description}</p> : null}
     </div>
+  );
+}
+
+function isGitHubRepositoryLink(label: string, url: string) {
+  return label === "저장소" && url.includes("github.com");
+}
+
+function isVisibleProjectLink(label: string) {
+  return label !== "서비스";
+}
+
+function GitHubIcon() {
+  return (
+    <GitBranch aria-hidden="true" className="h-4 w-4" strokeWidth={2} />
   );
 }
 
@@ -148,15 +163,23 @@ export default async function Home() {
                       <p className="text-sm text-black/48">{project.period}</p>
                     </div>
                     <div className="flex flex-wrap gap-2">
-                      {project.links.map((link) => (
+                      {project.links.filter((link) => isVisibleProjectLink(link.label)).map((link) => (
                         <a
                           key={`${project.slug}-${link.label}`}
                           href={link.url}
                           target="_blank"
                           rel="noreferrer"
                           className="inline-flex items-center rounded-full px-3 py-2 text-xs text-black/64 transition duration-150 hover:bg-black/6 hover:text-black"
+                          aria-label={isGitHubRepositoryLink(link.label, link.url) ? "GitHub 저장소" : link.label}
                         >
-                          {link.label}
+                          {isGitHubRepositoryLink(link.label, link.url) ? (
+                            <>
+                              <GitHubIcon />
+                              <span className="sr-only">{link.label}</span>
+                            </>
+                          ) : (
+                            link.label
+                          )}
                         </a>
                       ))}
                     </div>
