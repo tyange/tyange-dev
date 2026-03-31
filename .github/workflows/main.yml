@@ -27,6 +27,16 @@ jobs:
         env:
           NEXT_PUBLIC_TYANGE_CMS_API_BASE: "${{ vars.NEXT_PUBLIC_TYANGE_CMS_API_BASE || 'https://tyange.com/api/cms' }}"
 
+      - name: Prepare deploy directory
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER_NAME }}
+          key: ${{ secrets.PRIVATE_SSH_KEY }}
+          script: |
+            mkdir -p "${{ vars.DEPLOY_PATH }}"
+            find "${{ vars.DEPLOY_PATH }}" -mindepth 1 -maxdepth 1 -exec rm -rf {} +
+
       - name: Deploy static files via SCP
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -37,4 +47,3 @@ jobs:
           target: ${{ vars.DEPLOY_PATH }}
           strip_components: 1
           debug: true
-          rm: true
