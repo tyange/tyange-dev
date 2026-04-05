@@ -1,16 +1,13 @@
 import { getDevPosts, getPortfolio } from "@/lib/cms-api";
+import Link from "next/link";
 
-function SectionLabel({
-  title,
-  description,
-}: {
-  title: string;
-  description?: string;
-}) {
+function SectionLabel({ title, description }: { title: string; description?: string }) {
   return (
     <div className="space-y-2">
       <h2 className="text-2xl font-bold tracking-[-0.05em] text-black">{title}</h2>
-      {description ? <p className="max-w-xs text-sm leading-7 text-black/56">{description}</p> : null}
+      {description ? (
+        <p className="max-w-xs text-sm leading-7 text-black/56">{description}</p>
+      ) : null}
     </div>
   );
 }
@@ -25,11 +22,7 @@ function isVisibleProjectLink(label: string) {
 
 function GitHubIcon() {
   return (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 24 24"
-      className="h-4 w-4 fill-current"
-    >
+    <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4 fill-current">
       <path d="M12 .5C5.649.5.5 5.649.5 12A11.5 11.5 0 0 0 8.36 22.07c.575.106.785-.25.785-.556 0-.274-.01-1-.016-1.963-3.183.692-3.855-1.533-3.855-1.533-.52-1.32-1.27-1.672-1.27-1.672-1.038-.71.078-.696.078-.696 1.148.081 1.751 1.178 1.751 1.178 1.02 1.748 2.675 1.243 3.326.95.104-.739.4-1.243.727-1.528-2.54-.289-5.21-1.27-5.21-5.652 0-1.249.446-2.27 1.177-3.07-.118-.288-.51-1.45.112-3.023 0 0 .96-.307 3.145 1.173a10.92 10.92 0 0 1 5.728 0c2.184-1.48 3.142-1.173 3.142-1.173.624 1.573.232 2.735.114 3.023.733.8 1.175 1.821 1.175 3.07 0 4.393-2.675 5.36-5.223 5.644.41.353.776 1.05.776 2.117 0 1.528-.014 2.76-.014 3.135 0 .31.207.668.79.555A11.503 11.503 0 0 0 23.5 12C23.5 5.649 18.351.5 12 .5Z" />
     </svg>
   );
@@ -115,7 +108,10 @@ export default async function Home() {
 
                       <div className="mt-6 divide-y divide-black/[0.06] pl-5 sm:pl-8">
                         {company.items.map((item) => (
-                          <section key={`${company.company}-${item.title}`} className="space-y-2 py-5 first:pt-0 last:pb-0">
+                          <section
+                            key={`${company.company}-${item.title}`}
+                            className="space-y-2 py-5 first:pt-0 last:pb-0"
+                          >
                             <h2 className="text-[1.05rem] font-bold tracking-[-0.02em] text-black">
                               {item.title}
                             </h2>
@@ -124,7 +120,10 @@ export default async function Home() {
                             ) : null}
                             <div className="space-y-2 pt-1">
                               {item.bullets.map((bullet) => (
-                                <p key={bullet} className="max-w-4xl pl-4 text-sm leading-7 text-black/62">
+                                <p
+                                  key={bullet}
+                                  className="max-w-4xl pl-4 text-sm leading-7 text-black/62"
+                                >
                                   - {bullet}
                                 </p>
                               ))}
@@ -140,17 +139,11 @@ export default async function Home() {
           ) : null}
         </section>
 
-        <section
-          id="work"
-          className="grid gap-10 pb-14 lg:grid-cols-[15rem_minmax(0,1fr)]"
-        >
+        <section id="work" className="grid gap-10 pb-14 lg:grid-cols-[15rem_minmax(0,1fr)]">
           <SectionLabel title="작업" />
           <div className="divide-y divide-black/[0.06]">
             {content.featured_projects.map((project) => (
-              <article
-                key={project.slug}
-                className="py-5 first:pt-0"
-              >
+              <article key={project.slug} className="py-5 first:pt-0">
                 <div className="space-y-3">
                   <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                     <div className="space-y-1">
@@ -160,25 +153,31 @@ export default async function Home() {
                       <p className="text-sm text-black/48">{project.period}</p>
                     </div>
                     <div className="flex flex-wrap gap-2">
-                      {project.links.filter((link) => isVisibleProjectLink(link.label)).map((link) => (
-                        <a
-                          key={`${project.slug}-${link.label}`}
-                          href={link.url}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="inline-flex items-center rounded-full px-3 py-2 text-xs text-black/64 transition duration-150 hover:bg-black/6 hover:text-black"
-                          aria-label={isGitHubRepositoryLink(link.label, link.url) ? "GitHub 저장소" : link.label}
-                        >
-                          {isGitHubRepositoryLink(link.label, link.url) ? (
-                            <>
-                              <GitHubIcon />
-                              <span className="sr-only">{link.label}</span>
-                            </>
-                          ) : (
-                            link.label
-                          )}
-                        </a>
-                      ))}
+                      {project.links
+                        .filter((link) => isVisibleProjectLink(link.label))
+                        .map((link) => (
+                          <a
+                            key={`${project.slug}-${link.label}`}
+                            href={link.url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center rounded-full px-3 py-2 text-xs text-black/64 transition duration-150 hover:bg-black/6 hover:text-black"
+                            aria-label={
+                              isGitHubRepositoryLink(link.label, link.url)
+                                ? "GitHub 저장소"
+                                : link.label
+                            }
+                          >
+                            {isGitHubRepositoryLink(link.label, link.url) ? (
+                              <>
+                                <GitHubIcon />
+                                <span className="sr-only">{link.label}</span>
+                              </>
+                            ) : (
+                              link.label
+                            )}
+                          </a>
+                        ))}
                     </div>
                   </div>
                   <p className="max-w-3xl text-sm leading-7 text-black/62">{project.summary}</p>
@@ -206,17 +205,14 @@ export default async function Home() {
           <div className="divide-y divide-black/[0.06]">
             {devPosts.length > 0 ? (
               devPosts.map((post) => (
-                <article
-                  key={post.post_id}
-                  className="group cursor-pointer py-5 first:pt-0"
-                >
-                  <div className="space-y-1.5">
+                <div key={post.post_id} className="group cursor-pointer py-5 first:pt-0">
+                  <Link className="space-y-1.5" href={`/posts/${post.post_id}`}>
                     <h3 className="text-[1.1rem] font-bold tracking-[-0.04em] text-black transition group-hover:text-black/72">
                       {post.title}
                     </h3>
                     <p className="max-w-2xl text-sm leading-7 text-black/54">{post.description}</p>
-                  </div>
-                </article>
+                  </Link>
+                </div>
               ))
             ) : (
               <div className="py-3 text-sm leading-7 text-black/56">
@@ -231,12 +227,11 @@ export default async function Home() {
             <SectionLabel title="현재 작업" />
             <div className="divide-y divide-black/[0.06]">
               {currentItems.map((item) => (
-                <article
-                  key={item.name}
-                  className="py-5 first:pt-0"
-                >
+                <article key={item.name} className="py-5 first:pt-0">
                   <div className="space-y-3">
-                    <h3 className="text-2xl font-bold tracking-[-0.05em] text-black">{item.name}</h3>
+                    <h3 className="text-2xl font-bold tracking-[-0.05em] text-black">
+                      {item.name}
+                    </h3>
                     <p className="max-w-3xl text-sm leading-7 text-black/60">{item.summary}</p>
                     <div className="flex flex-wrap gap-2">
                       {item.stack.map((stack) => (
@@ -254,7 +249,6 @@ export default async function Home() {
             </div>
           </section>
         ) : null}
-
       </div>
     </main>
   );
