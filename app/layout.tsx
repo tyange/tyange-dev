@@ -2,6 +2,18 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 
+const monaspace = localFont({
+  variable: "--font-monaspace",
+  display: "swap",
+  src: [
+    {
+      path: "./fonts/monaspace-neon/monaspace-neon-latin-400-normal.woff2",
+      weight: "400",
+      style: "normal",
+    },
+  ],
+});
+
 const pretendard = localFont({
   variable: "--font-pretendard",
   display: "swap",
@@ -59,7 +71,7 @@ export const metadata: Metadata = {
   description: "차분한 인터페이스와 구조적인 프론트엔드 작업을 담은 개발자 포트폴리오.",
 };
 
-const rootClassName = [pretendard.variable].filter(Boolean).join(" ");
+const rootClassName = [pretendard.variable, monaspace.variable].filter(Boolean).join(" ");
 
 export default function RootLayout({
   children,

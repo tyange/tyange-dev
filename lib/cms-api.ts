@@ -127,6 +127,16 @@ export type PostItem = {
   status: string;
 };
 
+export type PostDetail = {
+  post_id: string;
+  title: string;
+  description: string;
+  published_at: string;
+  tags: TagWithCategory[];
+  content: string;
+  status: string;
+};
+
 type PostsResponse = {
   posts: PostItem[];
 };
@@ -160,4 +170,17 @@ export async function getPortfolio() {
 export async function getDevPosts() {
   const response = await fetchCms<PostsResponse>("/posts/search-with-tags?include=dev");
   return response.data?.posts ?? [];
+}
+
+export async function getPost(postId: string) {
+  const base = getApiBaseUrl();
+  const response = await fetch(`${base}/post/${postId}`, {
+    cache: "force-cache",
+  });
+
+  if (!response.ok) {
+    return null;
+  }
+
+  return (await response.json()) as PostDetail;
 }

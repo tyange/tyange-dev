@@ -50,7 +50,6 @@ export default async function Home() {
     );
   }
 
-  const currentItems = content.currently_building ?? [];
   const careerProfile = content.career;
 
   return (
@@ -199,7 +198,7 @@ export default async function Home() {
 
         <section
           id="writing"
-          className={`grid gap-10 lg:grid-cols-[15rem_minmax(0,1fr)] ${currentItems.length > 0 ? "pb-14" : "pb-0"}`}
+          className={`grid gap-10 lg:grid-cols-[15rem_minmax(0,1fr)] ${devPosts.length > 0 ? "pb-14" : "pb-0"}`}
         >
           <SectionLabel title="기록" />
           <div className="divide-y divide-black/[0.06]">
@@ -222,29 +221,21 @@ export default async function Home() {
           </div>
         </section>
 
-        {currentItems.length > 0 ? (
+        {devPosts.length > 0 ? (
           <section className="grid gap-10 pb-0 lg:grid-cols-[15rem_minmax(0,1fr)]">
-            <SectionLabel title="현재 작업" />
+            <SectionLabel title="블로그 글" />
             <div className="divide-y divide-black/[0.06]">
-              {currentItems.map((item) => (
-                <article key={item.name} className="py-5 first:pt-0">
-                  <div className="space-y-3">
-                    <h3 className="text-2xl font-bold tracking-[-0.05em] text-black">
-                      {item.name}
+              {devPosts.map((post) => (
+                <div key={post.post_id} className="group cursor-pointer py-5 first:pt-0">
+                  <Link className="space-y-1.5" href={`/posts/${post.post_id}`}>
+                    <h3 className="text-[1.1rem] font-bold tracking-[-0.04em] text-black transition group-hover:text-black/72">
+                      {post.title}
                     </h3>
-                    <p className="max-w-3xl text-sm leading-7 text-black/60">{item.summary}</p>
-                    <div className="flex flex-wrap gap-2">
-                      {item.stack.map((stack) => (
-                        <span
-                          key={`${item.name}-${stack}`}
-                          className="inline-flex items-center px-3 py-2 text-xs text-black/52"
-                        >
-                          {stack}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </article>
+                    <p className="max-w-2xl text-sm leading-7 text-black/54">
+                      {post.description}
+                    </p>
+                  </Link>
+                </div>
               ))}
             </div>
           </section>
