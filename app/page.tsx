@@ -220,26 +220,6 @@ export default async function Home() {
             )}
           </div>
         </section>
-
-        {devPosts.length > 0 ? (
-          <section className="grid gap-10 pb-0 lg:grid-cols-[15rem_minmax(0,1fr)]">
-            <SectionLabel title="블로그 글" />
-            <div className="divide-y divide-black/[0.06]">
-              {devPosts.map((post) => (
-                <div key={post.post_id} className="group cursor-pointer py-5 first:pt-0">
-                  <Link className="space-y-1.5" href={`/posts/${post.post_id}`}>
-                    <h3 className="text-[1.1rem] font-bold tracking-[-0.04em] text-black transition group-hover:text-black/72">
-                      {post.title}
-                    </h3>
-                    <p className="max-w-2xl text-sm leading-7 text-black/54">
-                      {post.description}
-                    </p>
-                  </Link>
-                </div>
-              ))}
-            </div>
-          </section>
-        ) : null}
       </div>
     </main>
   );
