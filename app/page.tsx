@@ -1,4 +1,4 @@
-import { getDevPosts, getPortfolio } from "@/lib/cms-api";
+import { getDevPosts, getPortfolio, type PortfolioProject } from "@/lib/cms-api";
 import { siGithub } from "simple-icons";
 import Link from "next/link";
 
@@ -29,6 +29,36 @@ function GitHubIcon() {
   );
 }
 
+function ProjectCardLinks({ project }: { project: PortfolioProject }) {
+  return (
+    <div className="flex gap-1">
+      {project.links
+        .filter((link) => isVisibleProjectLink(link.label))
+        .map((link) => (
+          <a
+            key={`${project.slug}-${link.label}`}
+            href={link.url}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center rounded-full p-2 text-black/36 transition hover:text-black/64"
+            aria-label={
+              isGitHubRepositoryLink(link.label, link.url) ? "GitHub 저장소" : link.label
+            }
+          >
+            {isGitHubRepositoryLink(link.label, link.url) ? (
+              <>
+                <GitHubIcon />
+                <span className="sr-only">{link.label}</span>
+              </>
+            ) : (
+              <span className="text-xs">{link.label}</span>
+            )}
+          </a>
+        ))}
+    </div>
+  );
+}
+
 export default async function Home() {
   const [portfolio, posts] = await Promise.allSettled([getPortfolio(), getDevPosts()]);
 
@@ -52,6 +82,26 @@ export default async function Home() {
   }
 
   const careerProfile = content.career;
+
+  const projectMap = new Map(content.featured_projects.map((p) => [p.slug, p]));
+  const inert = projectMap.get("inert");
+  const cms = projectMap.get("tyange-cms");
+  const cmsApi = projectMap.get("tyange-cms-api");
+  const blogProject = projectMap.get("tyange-blog");
+  const devProject = projectMap.get("tyange-dev");
+  const dashboardProject = projectMap.get("tyange-dashboard");
+  const personalSites = [blogProject, devProject, dashboardProject].filter(
+    (p): p is PortfolioProject => p != null,
+  );
+  const bentoSlugs = new Set([
+    "inert",
+    "tyange-cms",
+    "tyange-cms-api",
+    "tyange-blog",
+    "tyange-dev",
+    "tyange-dashboard",
+  ]);
+  const otherProjects = content.featured_projects.filter((p) => !bentoSlugs.has(p.slug));
 
   return (
     <main className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
@@ -139,61 +189,188 @@ export default async function Home() {
           ) : null}
         </section>
 
-        <section id="work" className="grid gap-10 pb-14 lg:grid-cols-[15rem_minmax(0,1fr)]">
-          <SectionLabel title="작업" />
-          <div className="divide-y divide-black/[0.06]">
-            {content.featured_projects.map((project) => (
-              <article key={project.slug} className="py-5 first:pt-0">
-                <div className="space-y-3">
-                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="space-y-1">
-                      <h3 className="text-2xl font-bold tracking-[-0.05em] text-black">
-                        {project.title}
-                      </h3>
-                      <p className="text-sm text-black/48">{project.period}</p>
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      {project.links
-                        .filter((link) => isVisibleProjectLink(link.label))
-                        .map((link) => (
-                          <a
-                            key={`${project.slug}-${link.label}`}
-                            href={link.url}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="inline-flex items-center rounded-full px-3 py-2 text-xs text-black/64 transition duration-150 hover:bg-black/6 hover:text-black"
-                            aria-label={
-                              isGitHubRepositoryLink(link.label, link.url)
-                                ? "GitHub 저장소"
-                                : link.label
-                            }
-                          >
-                            {isGitHubRepositoryLink(link.label, link.url) ? (
-                              <>
-                                <GitHubIcon />
-                                <span className="sr-only">{link.label}</span>
-                              </>
-                            ) : (
-                              link.label
-                            )}
-                          </a>
-                        ))}
-                    </div>
-                  </div>
-                  <p className="max-w-3xl text-sm leading-7 text-black/62">{project.summary}</p>
-                  <div className="flex flex-wrap gap-2">
-                    {project.stack.map((tag) => (
-                      <span
-                        key={`${project.slug}-${tag}`}
-                        className="inline-flex items-center px-3 py-2 text-xs text-black/52"
+        <section id="work" className="pb-14">
+          <h2 className="mb-8 text-2xl font-bold tracking-[-0.05em] text-black">작업</h2>
+
+          <div className="space-y-4">
+            {/* Hero: inert — full width */}
+            {inert && (
+              <article className="rounded-2xl border border-black/6 bg-white/40 p-8 lg:p-10">
+                <h3 className="text-3xl font-bold tracking-[-0.06em] text-black">
+                  {inert.title}
+                </h3>
+                <p className="mt-2 text-sm text-black/48">{inert.period}</p>
+
+                <p className="mt-5 max-w-3xl text-sm leading-7 text-black/62">
+                  {inert.summary}
+                </p>
+
+                {inert.highlights.length > 0 && (
+                  <ul className="mt-5 space-y-2.5">
+                    {inert.highlights.map((h) => (
+                      <li
+                        key={h}
+                        className="flex gap-2.5 text-sm leading-6 text-black/56"
                       >
-                        {tag}
-                      </span>
+                        <span className="shrink-0 text-black/20">—</span>
+                        <span>{h}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+
+                <div className="mt-8 flex flex-wrap items-center gap-3">
+                  {inert.links
+                    .filter((link) => isVisibleProjectLink(link.label))
+                    .map((link) => (
+                      <a
+                        key={`${inert.slug}-${link.label}`}
+                        href={link.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1.5 rounded-full border border-black/10 px-4 py-2 text-sm text-black/64 transition hover:bg-black/4 hover:text-black"
+                      >
+                        {link.label}
+                        <span className="text-[0.65rem]">↗</span>
+                      </a>
+                    ))}
+                </div>
+
+                <div className="mt-6 flex flex-wrap gap-2">
+                  {inert.stack.map((tag) => (
+                    <span
+                      key={`${inert.slug}-${tag}`}
+                      className="rounded-full bg-black/4 px-3 py-1.5 text-xs text-black/48"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </article>
+            )}
+
+            {/* Two groups below — side by side */}
+            <div className="grid gap-4 lg:grid-cols-2">
+              {/* CMS System Group */}
+              {(cms || cmsApi) && (
+                <div className="rounded-2xl border border-black/6 bg-white/40 p-7">
+                  <div className="mb-5">
+                    <h3 className="text-lg font-bold tracking-[-0.03em] text-black">
+                      CMS 시스템
+                    </h3>
+                    <p className="mt-1 text-sm text-black/48">
+                      블로그를 구동하는 콘텐츠 관리 시스템
+                    </p>
+                  </div>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    {[cms, cmsApi]
+                      .filter((p): p is PortfolioProject => p != null)
+                      .map((project) => (
+                        <article
+                          key={project.slug}
+                          className="rounded-xl bg-black/2 p-5 transition-colors duration-200 hover:bg-black/5"
+                        >
+                          <div className="flex items-start justify-between">
+                            <h4 className="font-bold tracking-[-0.02em] text-black">
+                              {project.title}
+                            </h4>
+                            <ProjectCardLinks project={project} />
+                          </div>
+                          <p className="mt-1 text-xs text-black/44">{project.period}</p>
+                          <p className="mt-3 text-sm leading-6 text-black/58">
+                            {project.summary}
+                          </p>
+                          <div className="mt-4 flex flex-wrap gap-1.5">
+                            {project.stack.map((tag) => (
+                              <span
+                                key={`${project.slug}-${tag}`}
+                                className="rounded-full bg-black/4 px-2.5 py-1 text-[0.6875rem] text-black/44"
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        </article>
+                      ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Personal Sites Group */}
+              {personalSites.length > 0 && (
+                <div className="rounded-2xl border border-black/6 bg-white/40 p-7">
+                  <div className="mb-5">
+                    <h3 className="text-lg font-bold tracking-[-0.03em] text-black">
+                      개인 사이트
+                    </h3>
+                    <p className="mt-1 text-sm text-black/48">
+                      블로그, 포트폴리오, 운영 대시보드
+                    </p>
+                  </div>
+                  <div className="space-y-3">
+                    {personalSites.map((project) => (
+                      <article
+                        key={project.slug}
+                        className="rounded-xl bg-black/2 p-5 transition-colors duration-200 hover:bg-black/5"
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0">
+                            <h4 className="font-bold tracking-[-0.02em] text-black">
+                              {project.title}
+                            </h4>
+                            <p className="mt-1 text-xs text-black/44">{project.period}</p>
+                          </div>
+                          <ProjectCardLinks project={project} />
+                        </div>
+                        <div className="mt-3 flex flex-wrap gap-1.5">
+                          {project.stack.map((tag) => (
+                            <span
+                              key={`${project.slug}-${tag}`}
+                              className="rounded-full bg-black/4 px-2.5 py-1 text-[0.6875rem] text-black/44"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      </article>
                     ))}
                   </div>
                 </div>
-              </article>
-            ))}
+              )}
+            </div>
+
+            {/* Fallback */}
+            {otherProjects.length > 0 && (
+              <div className="grid gap-4 lg:grid-cols-2">
+                {otherProjects.map((project) => (
+                  <article
+                    key={project.slug}
+                    className="flex flex-col rounded-2xl border border-black/6 bg-white/40 p-7"
+                  >
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <h3 className="text-lg font-bold tracking-[-0.03em] text-black">
+                          {project.title}
+                        </h3>
+                        <p className="mt-1 text-sm text-black/48">{project.period}</p>
+                      </div>
+                      <ProjectCardLinks project={project} />
+                    </div>
+                    <p className="mt-3 text-sm leading-7 text-black/62">{project.summary}</p>
+                    <div className="mt-auto flex flex-wrap gap-2 pt-5">
+                      {project.stack.map((tag) => (
+                        <span
+                          key={`${project.slug}-${tag}`}
+                          className="rounded-full bg-black/4 px-3 py-1.5 text-xs text-black/48"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </article>
+                ))}
+              </div>
+            )}
           </div>
         </section>
 
