@@ -16,27 +16,8 @@ export type PortfolioIdentity = {
   availability: string;
   email: string;
   github_url: string;
-  blog_url: string;
+  blog_url?: string | null;
   velog_url?: string | null;
-};
-
-export type PortfolioHero = {
-  eyebrow: string;
-  headline: string;
-  summary: string;
-  primary_cta: PortfolioLink;
-  secondary_cta: PortfolioLink;
-};
-
-export type PortfolioHighlightCard = {
-  label: string;
-  title: string;
-};
-
-export type PortfolioMetric = {
-  value: string;
-  unit: string;
-  description: string;
 };
 
 export type PortfolioProject = {
@@ -47,26 +28,6 @@ export type PortfolioProject = {
   stack: string[];
   highlights: string[];
   links: PortfolioLink[];
-};
-
-export type PortfolioAbout = {
-  eyebrow: string;
-  headline: string;
-  paragraphs: string[];
-  services: string[];
-  strengths: string[];
-};
-
-export type PortfolioWritingSection = {
-  eyebrow: string;
-  title: string;
-  description: string;
-};
-
-export type PortfolioCurrentItem = {
-  name: string;
-  summary: string;
-  stack: string[];
 };
 
 export type PortfolioCareerItem = {
@@ -94,15 +55,8 @@ export type PortfolioDocument = {
   slug: string;
   version: number;
   identity: PortfolioIdentity;
-  hero: PortfolioHero;
-  highlight_cards: PortfolioHighlightCard[];
-  metrics?: PortfolioMetric[];
-  guiding_principle: string;
   featured_projects: PortfolioProject[];
-  about: PortfolioAbout;
-  writing: PortfolioWritingSection;
   career?: PortfolioCareerSection;
-  currently_building?: PortfolioCurrentItem[];
 };
 
 export type PortfolioResponse = {
