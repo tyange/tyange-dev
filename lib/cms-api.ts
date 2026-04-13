@@ -11,9 +11,6 @@ export type PortfolioLink = {
 
 export type PortfolioIdentity = {
   name: string;
-  role: string;
-  location: string;
-  availability: string;
   email: string;
   github_url: string;
   blog_url?: string | null;

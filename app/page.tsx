@@ -108,7 +108,7 @@ export default async function Home() {
       <header>
         <div className="mx-auto flex w-full max-w-6xl items-center px-6 py-5 sm:px-10 lg:px-12">
           <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-[1.05rem] text-black/86">
-            <span className="font-medium">유태양</span>
+            <span className="font-medium">{content.identity.name}</span>
             <span className="text-black/16">|</span>
             <a
               href={content.identity.github_url}
@@ -118,10 +118,36 @@ export default async function Home() {
             >
               GitHub
             </a>
+            {content.identity.blog_url ? (
+              <>
+                <span className="text-black/16">|</span>
+                <a
+                  href={content.identity.blog_url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="transition hover:text-black"
+                >
+                  Blog
+                </a>
+              </>
+            ) : null}
+            {content.identity.velog_url ? (
+              <>
+                <span className="text-black/16">|</span>
+                <a
+                  href={content.identity.velog_url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="transition hover:text-black"
+                >
+                  Velog
+                </a>
+              </>
+            ) : null}
             <span className="text-black/16">|</span>
             <a
               href={`mailto:${content.identity.email}`}
-              className="font-medium transition hover:text-black"
+              className="transition hover:text-black"
             >
               {content.identity.email}
             </a>
