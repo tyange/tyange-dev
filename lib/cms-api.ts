@@ -46,12 +46,23 @@ export type PortfolioCareerSection = {
   companies: PortfolioCareerCompany[];
 };
 
+export type PortfolioTechStackItem = {
+  name: string;
+  icon_url: string;
+};
+
+export type PortfolioIntroSection = {
+  content: string;
+  tech_stack: PortfolioTechStackItem[];
+};
+
 export type PortfolioDocument = {
   slug: string;
   version: number;
   identity: PortfolioIdentity;
   featured_projects: PortfolioProject[];
   career?: PortfolioCareerSection;
+  intro?: PortfolioIntroSection;
 };
 
 export type PortfolioResponse = {

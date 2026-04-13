@@ -1,5 +1,7 @@
 import { getDevPosts, getPortfolio, type PortfolioProject } from "@/lib/cms-api";
 import { siGithub } from "simple-icons";
+import { renderMarkdown } from "@/lib/markdown";
+import Image from "next/image";
 import Link from "next/link";
 
 function SectionLabel({ title, description }: { title: string; description?: string }) {
@@ -103,6 +105,11 @@ export default async function Home() {
   ]);
   const otherProjects = content.featured_projects.filter((p) => !bentoSlugs.has(p.slug));
 
+  const introHtml = content.intro?.content
+    ? await renderMarkdown(content.intro.content)
+    : null;
+  const introTechStack = content.intro?.tech_stack ?? [];
+
   return (
     <main className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
       <header>
@@ -130,7 +137,44 @@ export default async function Home() {
       </header>
 
       <div className="mx-auto flex w-full max-w-6xl flex-col px-6 sm:px-10 lg:px-12">
-        <section className="pt-3 pb-12">
+        {/* ── Intro ── */}
+        <section className="pt-16 pb-20 lg:pt-24 lg:pb-28">
+          {introHtml ? (
+            <div
+              className="prose prose-neutral max-w-2xl prose-p:text-[1.625rem] prose-p:font-bold prose-p:leading-[1.45] prose-p:tracking-[-0.03em] prose-p:text-black sm:prose-p:text-[2rem] lg:prose-p:text-[2.25rem]"
+              dangerouslySetInnerHTML={{ __html: introHtml }}
+            />
+          ) : (
+            <h1 className="max-w-2xl text-[1.625rem] font-bold leading-[1.45] tracking-[-0.03em] text-black sm:text-[2rem] lg:text-[2.25rem]">
+              여기에 인트로 텍스트가 들어갑니다.
+            </h1>
+          )}
+
+          {introTechStack.length > 0 && (
+            <div className="mt-10 flex flex-wrap items-center gap-5">
+              {introTechStack.map((item) => (
+                <span
+                  key={item.name}
+                  className="flex items-center gap-2 text-sm text-black/40 transition hover:text-black/70"
+                  title={item.name}
+                >
+                  {item.icon_url && (
+                    <Image
+                      src={item.icon_url}
+                      alt={item.name}
+                      width={20}
+                      height={20}
+                      className="h-5 w-5 shrink-0 object-contain"
+                    />
+                  )}
+                  <span className="hidden sm:inline">{item.name}</span>
+                </span>
+              ))}
+            </div>
+          )}
+        </section>
+
+        <section className="pb-12">
           {careerProfile ? (
             <>
               <div className="max-w-[64rem]">

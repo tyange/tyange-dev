@@ -1,24 +1,7 @@
 import { getDevPosts, getPost } from "@/lib/cms-api";
+import { renderMarkdown } from "@/lib/markdown";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { unified } from "unified";
-import remarkParse from "remark-parse";
-import remarkGfm from "remark-gfm";
-import remarkRehype from "remark-rehype";
-import rehypeShiki from "@shikijs/rehype";
-import rehypeStringify from "rehype-stringify";
-
-async function renderMarkdown(content: string) {
-  const result = await unified()
-    .use(remarkParse)
-    .use(remarkGfm)
-    .use(remarkRehype)
-    .use(rehypeShiki, { theme: "dark-plus" })
-    .use(rehypeStringify)
-    .process(content);
-
-  return String(result);
-}
 
 export async function generateStaticParams() {
   const devPosts = await getDevPosts();
@@ -33,7 +16,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
     notFound();
   }
 
-  const html = await renderMarkdown(post.content);
+  const html = await renderMarkdown(post.content, { shiki: true });
 
   return (
     <main className="min-h-screen bg-background text-foreground">
