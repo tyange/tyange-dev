@@ -118,32 +118,6 @@ export default async function Home() {
             >
               GitHub
             </a>
-            {content.identity.blog_url ? (
-              <>
-                <span className="text-black/16">|</span>
-                <a
-                  href={content.identity.blog_url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="transition hover:text-black"
-                >
-                  Blog
-                </a>
-              </>
-            ) : null}
-            {content.identity.velog_url ? (
-              <>
-                <span className="text-black/16">|</span>
-                <a
-                  href={content.identity.velog_url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="transition hover:text-black"
-                >
-                  Velog
-                </a>
-              </>
-            ) : null}
             <span className="text-black/16">|</span>
             <a
               href={`mailto:${content.identity.email}`}

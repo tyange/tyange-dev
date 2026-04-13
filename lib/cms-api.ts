@@ -13,8 +13,6 @@ export type PortfolioIdentity = {
   name: string;
   email: string;
   github_url: string;
-  blog_url?: string | null;
-  velog_url?: string | null;
 };
 
 export type PortfolioProject = {
