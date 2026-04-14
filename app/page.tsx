@@ -43,9 +43,7 @@ function ProjectCardLinks({ project }: { project: PortfolioProject }) {
             target="_blank"
             rel="noreferrer"
             className="inline-flex items-center rounded-full p-2 text-black/36 transition hover:text-black/64"
-            aria-label={
-              isGitHubRepositoryLink(link.label, link.url) ? "GitHub 저장소" : link.label
-            }
+            aria-label={isGitHubRepositoryLink(link.label, link.url) ? "GitHub 저장소" : link.label}
           >
             {isGitHubRepositoryLink(link.label, link.url) ? (
               <>
@@ -105,9 +103,7 @@ export default async function Home() {
   ]);
   const otherProjects = content.featured_projects.filter((p) => !bentoSlugs.has(p.slug));
 
-  const introHtml = content.intro?.content
-    ? await renderMarkdown(content.intro.content)
-    : null;
+  const introHtml = content.intro?.content ? await renderMarkdown(content.intro.content) : null;
   const introTechStack = content.intro?.tech_stack ?? [];
 
   return (
@@ -126,10 +122,7 @@ export default async function Home() {
               GitHub
             </a>
             <span className="text-black/16">|</span>
-            <a
-              href={`mailto:${content.identity.email}`}
-              className="transition hover:text-black"
-            >
+            <a href={`mailto:${content.identity.email}`} className="transition hover:text-black">
               {content.identity.email}
             </a>
           </div>
@@ -138,7 +131,7 @@ export default async function Home() {
 
       <div className="mx-auto flex w-full max-w-6xl flex-col px-6 sm:px-10 lg:px-12">
         {/* ── Intro ── */}
-        <section className="pt-16 pb-20 lg:pt-24 lg:pb-28">
+        <section className="pt-16 pb-20">
           {introHtml ? (
             <div
               className="prose prose-neutral max-w-2xl prose-p:text-[1.625rem] prose-p:font-bold prose-p:leading-[1.45] prose-p:tracking-[-0.03em] prose-p:text-black sm:prose-p:text-[2rem] lg:prose-p:text-[2.25rem]"
@@ -155,7 +148,7 @@ export default async function Home() {
               {introTechStack.map((item) => (
                 <span
                   key={item.name}
-                  className="flex items-center gap-2 text-sm text-black/40 transition hover:text-black/70"
+                  className="flex items-center gap-2 text-sm text-black/70 transition hover:text-black"
                   title={item.name}
                 >
                   {item.icon_url && (
@@ -240,22 +233,15 @@ export default async function Home() {
             {/* Hero: inert — full width */}
             {inert && (
               <article className="rounded-2xl border border-black/6 bg-white/40 p-8 lg:p-10">
-                <h3 className="text-3xl font-bold tracking-[-0.06em] text-black">
-                  {inert.title}
-                </h3>
+                <h3 className="text-3xl font-bold tracking-[-0.06em] text-black">{inert.title}</h3>
                 <p className="mt-2 text-sm text-black/48">{inert.period}</p>
 
-                <p className="mt-5 max-w-3xl text-sm leading-7 text-black/62">
-                  {inert.summary}
-                </p>
+                <p className="mt-5 max-w-3xl text-sm leading-7 text-black/62">{inert.summary}</p>
 
                 {inert.highlights.length > 0 && (
                   <ul className="mt-5 space-y-2.5">
                     {inert.highlights.map((h) => (
-                      <li
-                        key={h}
-                        className="flex gap-2.5 text-sm leading-6 text-black/56"
-                      >
+                      <li key={h} className="flex gap-2.5 text-sm leading-6 text-black/56">
                         <span className="shrink-0 text-black/20">—</span>
                         <span>{h}</span>
                       </li>
@@ -299,9 +285,7 @@ export default async function Home() {
               {(cms || cmsApi) && (
                 <div className="rounded-2xl border border-black/6 bg-white/40 p-7">
                   <div className="mb-5">
-                    <h3 className="text-lg font-bold tracking-[-0.03em] text-black">
-                      CMS 시스템
-                    </h3>
+                    <h3 className="text-lg font-bold tracking-[-0.03em] text-black">CMS 시스템</h3>
                     <p className="mt-1 text-sm text-black/48">
                       블로그를 구동하는 콘텐츠 관리 시스템
                     </p>
@@ -321,9 +305,7 @@ export default async function Home() {
                             <ProjectCardLinks project={project} />
                           </div>
                           <p className="mt-1 text-xs text-black/44">{project.period}</p>
-                          <p className="mt-3 text-sm leading-6 text-black/58">
-                            {project.summary}
-                          </p>
+                          <p className="mt-3 text-sm leading-6 text-black/58">{project.summary}</p>
                           <div className="mt-4 flex flex-wrap gap-1.5">
                             {project.stack.map((tag) => (
                               <span
@@ -344,12 +326,8 @@ export default async function Home() {
               {personalSites.length > 0 && (
                 <div className="rounded-2xl border border-black/6 bg-white/40 p-7">
                   <div className="mb-5">
-                    <h3 className="text-lg font-bold tracking-[-0.03em] text-black">
-                      개인 사이트
-                    </h3>
-                    <p className="mt-1 text-sm text-black/48">
-                      블로그, 포트폴리오, 운영 대시보드
-                    </p>
+                    <h3 className="text-lg font-bold tracking-[-0.03em] text-black">개인 사이트</h3>
+                    <p className="mt-1 text-sm text-black/48">블로그, 포트폴리오, 운영 대시보드</p>
                   </div>
                   <div className="space-y-3">
                     {personalSites.map((project) => (
