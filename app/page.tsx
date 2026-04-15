@@ -131,10 +131,10 @@ export default async function Home() {
 
       <div className="mx-auto flex w-full max-w-6xl flex-col px-6 sm:px-10 lg:px-12">
         {/* ── Intro ── */}
-        <section className="pt-16 pb-20">
+        <section className="w-full pt-16 pb-20">
           {introHtml ? (
             <div
-              className="prose prose-neutral max-w-2xl prose-p:text-[1.625rem] prose-p:font-bold prose-p:leading-[1.45] prose-p:tracking-[-0.03em] prose-p:text-black sm:prose-p:text-[2rem] lg:prose-p:text-[2.25rem]"
+              className="prose prose-neutral max-w-3xl break-keep prose-p:text-[1.625rem] prose-p:font-bold prose-p:leading-[1.45] prose-p:tracking-[-0.03em] prose-p:text-black sm:prose-p:text-[2rem] lg:prose-p:text-[2.25rem]"
               dangerouslySetInnerHTML={{ __html: introHtml }}
             />
           ) : (
