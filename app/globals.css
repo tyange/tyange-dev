@@ -28,6 +28,10 @@ body {
   font-family: var(--font-pretendard), sans-serif;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
+  /* 한국어 줄바꿈: 어절(공백 단위)을 유지해 단어 중간이 끊기지 않게 한다.
+     긴 URL 등 끊을 수 없는 토큰만 예외적으로 줄바꿈(overflow-wrap). */
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 
 a {
