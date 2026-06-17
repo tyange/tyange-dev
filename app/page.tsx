@@ -83,25 +83,33 @@ export default async function Home() {
 
   const careerProfile = content.career;
 
+  // Hero: featured_projects 배열의 첫 프로젝트(= CMS의 1순위)를 풀폭으로 크게 보여준다.
+  // 즉 큰 카드는 CMS에서 순서만 바꿔 제어한다(과거의 slug "inert" 고정 방식 대체).
+  const hero = content.featured_projects[0] ?? null;
+  const heroSlug = hero?.slug;
+
   const projectMap = new Map(content.featured_projects.map((p) => [p.slug, p]));
-  const inert = projectMap.get("inert");
-  const cms = projectMap.get("tyange-cms");
-  const cmsApi = projectMap.get("tyange-cms-api");
-  const blogProject = projectMap.get("tyange-blog");
-  const devProject = projectMap.get("tyange-dev");
-  const dashboardProject = projectMap.get("tyange-dashboard");
+  // Hero로 뽑힌 프로젝트는 아래 그룹/폴백에서 중복 렌더되지 않도록 제외한다.
+  const pickGrouped = (slug: string) =>
+    slug === heroSlug ? undefined : projectMap.get(slug);
+  const cms = pickGrouped("tyange-cms");
+  const cmsApi = pickGrouped("tyange-cms-api");
+  const blogProject = pickGrouped("tyange-blog");
+  const devProject = pickGrouped("tyange-dev");
+  const dashboardProject = pickGrouped("tyange-dashboard");
   const personalSites = [blogProject, devProject, dashboardProject].filter(
     (p): p is PortfolioProject => p != null,
   );
-  const bentoSlugs = new Set([
-    "inert",
+  const groupedSlugs = new Set([
     "tyange-cms",
     "tyange-cms-api",
     "tyange-blog",
     "tyange-dev",
     "tyange-dashboard",
   ]);
-  const otherProjects = content.featured_projects.filter((p) => !bentoSlugs.has(p.slug));
+  const otherProjects = content.featured_projects.filter(
+    (p) => p.slug !== heroSlug && !groupedSlugs.has(p.slug),
+  );
 
   const introHtml = content.intro?.content ? await renderMarkdown(content.intro.content) : null;
   const introTechStack = content.intro?.tech_stack ?? [];
@@ -230,17 +238,17 @@ export default async function Home() {
           <h2 className="mb-8 text-2xl font-bold tracking-[-0.05em] text-black">작업</h2>
 
           <div className="space-y-4">
-            {/* Hero: inert — full width */}
-            {inert && (
+            {/* Hero: featured_projects[0] — full width */}
+            {hero && (
               <article className="rounded-2xl border border-black/6 bg-white/40 p-8 lg:p-10">
-                <h3 className="text-3xl font-bold tracking-[-0.06em] text-black">{inert.title}</h3>
-                <p className="mt-2 text-sm text-black/48">{inert.period}</p>
+                <h3 className="text-3xl font-bold tracking-[-0.06em] text-black">{hero.title}</h3>
+                <p className="mt-2 text-sm text-black/48">{hero.period}</p>
 
-                <p className="mt-5 max-w-3xl text-sm leading-7 text-black/62">{inert.summary}</p>
+                <p className="mt-5 max-w-3xl text-sm leading-7 text-black/62">{hero.summary}</p>
 
-                {inert.highlights.length > 0 && (
+                {hero.highlights.length > 0 && (
                   <ul className="mt-5 space-y-2.5">
-                    {inert.highlights.map((h) => (
+                    {hero.highlights.map((h) => (
                       <li key={h} className="flex gap-2.5 text-sm leading-6 text-black/56">
                         <span className="shrink-0 text-black/20">—</span>
                         <span>{h}</span>
@@ -250,11 +258,11 @@ export default async function Home() {
                 )}
 
                 <div className="mt-8 flex flex-wrap items-center gap-3">
-                  {inert.links
+                  {hero.links
                     .filter((link) => isVisibleProjectLink(link.label))
                     .map((link) => (
                       <a
-                        key={`${inert.slug}-${link.label}`}
+                        key={`${hero.slug}-${link.label}`}
                         href={link.url}
                         target="_blank"
                         rel="noreferrer"
@@ -267,9 +275,9 @@ export default async function Home() {
                 </div>
 
                 <div className="mt-6 flex flex-wrap gap-2">
-                  {inert.stack.map((tag) => (
+                  {hero.stack.map((tag) => (
                     <span
-                      key={`${inert.slug}-${tag}`}
+                      key={`${hero.slug}-${tag}`}
                       className="rounded-full bg-black/4 px-3 py-1.5 text-xs text-black/48"
                     >
                       {tag}
