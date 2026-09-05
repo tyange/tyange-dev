@@ -83,6 +83,29 @@ unified/rehype/shiki 전체)이 클라이언트 번들에 실제로 들어가 �
 `src/lib/markdown.ts` 주석 참고). `langs`도 실제 쓰는 언어로 좁혀 불필요한 청크를
 줄인다.
 
+## `vite dev`에서만: 페이지 이동 시 이전 페이지 콘텐츠가 안 사라지고 아래에 남는 버그
+
+`bun run dev`로 뜬 사이트에서, 페이지를 새로고침한 직후(대략 1~2초 이내) 클라이언트
+사이드 이동(예: 홈 → `/posts/:id`)을 하면 URL은 정상적으로 바뀌는데 이전 페이지의
+`<main>`이 사라지지 않고, 그 아래에 새 페이지의 `<main>`이 그대로 추가된다(콘솔 에러
+없음, `#app` 아래 `<main>`이 2개가 됨). 스크롤 위치도 유지되는 걸 보면 풀 리로드가
+아니라 클라이언트 라우팅 자체가 이 증상을 낸다 — 즉 라우터가 이전 라우트를 unmount
+안 하고 새 라우트를 형제로 append하는 것. 새로고침 후 1.5초 이상 기다렸다가 이동하면
+재현 안 됨 — 타이밍(하이드레이션 경합으로 추정)에 달렸다.
+
+**`bun run build` 후 정적 파일(`.output/public`)로 서빙하면 재현 안 됨** — 같은 클릭을
+20ms 간격으로 폴링하며 여러 번 반복해도 `<main>`이 항상 1개였다. 즉 이건 `vite
+dev`/nitro dev 서버의 SSR+하이드레이션 파이프라인에만 있는 개발 전용 버그고, 실제
+배포되는 정적 사이트에는 영향 없다 — 위 nitro static 빌드 버그와 같은 급의 "이 스택
+특유의 dev 전용 결함" 케이스. 사용자가 실제 화면에서 겪었다면 먼저 프로덕션 빌드로
+재현되는지부터 확인할 것(안 되면 급하게 고칠 필요 없음).
+
+부수적으로 발견한 것: 같은 시점에 SolidStart 개발자 툴바가
+`@jridgewell/resolve-uri`의 UMD 빌드를 ESM `default` export로 잘못 임포트해
+`SyntaxError`를 던지며 실패한다(`node_modules/@solidjs/start/dist/shared/dev-toolbar`
+경유). 위 버그와 직접 연관은 확인 못 했지만 시점이 겹쳐서 관련 가능성을 배제 못 함 —
+dev 콘솔에 이 에러가 뜨는 게 정상은 아니니 나중에 따로 볼 것.
+
 ## 디자인 시스템 적용 후: `.prose`엔 `dark:prose-invert`를 꼭 같이 켠다
 
 `@tyange-labs/design-system`의 `dark-auto.css`로 다크 모드를 넣은 뒤,
