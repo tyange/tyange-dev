@@ -1,0 +1,131 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* next/font/local이 자동으로 해주던 self-host 등록을 수동 @font-face로 대체.
+   가중치·경로는 기존 app/layout.tsx의 localFont 설정과 동일하다. */
+@font-face {
+  font-family: "Pretendard Variable";
+  src: url("./fonts/pretendard/Pretendard-Thin.subset.woff2") format("woff2");
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Pretendard Variable";
+  src: url("./fonts/pretendard/Pretendard-ExtraLight.subset.woff2") format("woff2");
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Pretendard Variable";
+  src: url("./fonts/pretendard/Pretendard-Light.subset.woff2") format("woff2");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Pretendard Variable";
+  src: url("./fonts/pretendard/Pretendard-Regular.subset.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Pretendard Variable";
+  src: url("./fonts/pretendard/Pretendard-Medium.subset.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Pretendard Variable";
+  src: url("./fonts/pretendard/Pretendard-SemiBold.subset.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Pretendard Variable";
+  src: url("./fonts/pretendard/Pretendard-Bold.subset.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Pretendard Variable";
+  src: url("./fonts/pretendard/Pretendard-ExtraBold.subset.woff2") format("woff2");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Pretendard Variable";
+  src: url("./fonts/pretendard/Pretendard-Black.subset.woff2") format("woff2");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Monaspace Neon";
+  src: url("./fonts/monaspace-neon/monaspace-neon-latin-400-normal.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --background: #f0ede8;
+  --foreground: #111111;
+  --font-pretendard: "Pretendard Variable", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, sans-serif;
+  --font-monaspace: "Monaspace Neon", ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-pretendard);
+  --font-mono: var(--font-monaspace);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-pretendard), sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  /* 한국어 줄바꿈: 어절(공백 단위)을 유지해 단어 중간이 끊기지 않게 한다.
+     긴 URL 등 끊을 수 없는 토큰만 예외적으로 줄바꿈(overflow-wrap). */
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+::selection {
+  background: rgba(16, 16, 16, 0.12);
+}
+
+.prose :not(pre) > code {
+  background-color: rgba(0, 0, 0, 0.06);
+  padding: 0.2em 0.4em;
+  border-radius: 0.25rem;
+}
+
+.prose code::before,
+.prose code::after {
+  content: none;
+}

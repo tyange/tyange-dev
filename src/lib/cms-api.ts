@@ -102,11 +102,7 @@ type PostsResponse = {
 };
 
 function getApiBaseUrl() {
-  return (
-    process.env.NEXT_PUBLIC_TYANGE_CMS_API_BASE ??
-    process.env.CMS_API_BASE_URL ??
-    "https://tyange.com/api/cms"
-  ).replace(/\/$/, "");
+  return (process.env.CMS_API_BASE_URL ?? "https://tyange.com/api/cms").replace(/\/$/, "");
 }
 
 async function fetchCms<T>(path: string) {

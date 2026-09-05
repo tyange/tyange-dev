@@ -25,7 +25,7 @@ jobs:
       - name: Build static export
         run: bun run build
         env:
-          NEXT_PUBLIC_TYANGE_CMS_API_BASE: "${{ vars.NEXT_PUBLIC_TYANGE_CMS_API_BASE || 'https://tyange.com/api/cms' }}"
+          CMS_API_BASE_URL: "${{ vars.CMS_API_BASE_URL || 'https://tyange.com/api/cms' }}"
 
       - name: Prepare deploy directory
         uses: appleboy/ssh-action@v1.0.3
@@ -43,7 +43,7 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER_NAME }}
           key: ${{ secrets.PRIVATE_SSH_KEY }}
-          source: "out/*"
+          source: ".output/public/*"
           target: ${{ vars.DEPLOY_PATH }}
-          strip_components: 1
+          strip_components: 2
           debug: true
