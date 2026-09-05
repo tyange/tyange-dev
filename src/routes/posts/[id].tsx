@@ -30,7 +30,7 @@ export default function PostPage(props: { params: { id: string } }) {
     <Show
       when={data() !== undefined}
       fallback={
-        <main class="min-h-screen bg-background text-foreground">
+        <main class="min-h-screen bg-tl-bg text-tl-fg">
           <div class="mx-auto w-full max-w-3xl flex-1 px-6 py-16 sm:px-10">불러오는 중…</div>
         </main>
       }
@@ -38,12 +38,12 @@ export default function PostPage(props: { params: { id: string } }) {
       <Show
         when={data()?.post}
         fallback={
-          <main class="min-h-screen bg-background text-foreground">
+          <main class="min-h-screen bg-tl-bg text-tl-fg">
             <div class="mx-auto w-full max-w-3xl flex-1 px-6 py-16 sm:px-10">
-              <p class="text-sm leading-7 text-black/56">글을 찾을 수 없습니다.</p>
+              <p class="text-sm leading-7 text-tl-fg/56">글을 찾을 수 없습니다.</p>
               <a
                 href="/"
-                class="mt-4 inline-flex items-center text-sm text-black/48 hover:text-black"
+                class="mt-4 inline-flex items-center text-sm text-tl-fg/48 hover:text-tl-fg"
               >
                 &larr; 돌아가기
               </a>
@@ -52,28 +52,28 @@ export default function PostPage(props: { params: { id: string } }) {
         }
       >
         {(post) => (
-          <main class="min-h-screen bg-background text-foreground">
+          <main class="min-h-screen bg-tl-bg text-tl-fg">
             <div class="mx-auto w-full max-w-3xl flex-1 px-6 py-16 sm:px-10">
-              <article class="prose prose-neutral max-w-none">
-                <header class="not-prose mb-8 border-b border-black/10 pb-4">
+              <article class="prose prose-neutral dark:prose-invert max-w-none">
+                <header class="not-prose mb-8 border-b border-tl-border pb-4">
                   <div class="mb-4">
-                    <time class="text-sm text-black/50">{post().published_at}</time>
+                    <time class="text-sm text-tl-fg/50">{post().published_at}</time>
                   </div>
-                  <h1 class="mb-4 text-4xl font-bold tracking-[-0.05em] text-black">
+                  <h1 class="mb-4 text-4xl font-bold tracking-[-0.05em] text-tl-fg">
                     {post().title}
                   </h1>
-                  <p class="text-xl text-black/70">{post().description}</p>
+                  <p class="text-xl text-tl-fg/70">{post().description}</p>
                 </header>
 
                 {/* rehype-sanitize를 통과한 뒤의 HTML만 여기 들어온다(fetchPost 참고) */}
                 {/* eslint-disable-next-line solid/no-innerhtml */}
                 <div innerHTML={data()!.html!} />
 
-                <footer class="not-prose mt-8 border-t border-black/10 pt-8">
+                <footer class="not-prose mt-8 border-t border-tl-border pt-8">
                   {post().tags.length > 0 ? (
                     <div class="flex flex-wrap gap-2">
                       {post().tags.map((tag) => (
-                        <span class="rounded-full bg-black/5 px-3 py-1 text-sm text-black/80">
+                        <span class="rounded-full bg-tl-fg/5 px-3 py-1 text-sm text-tl-fg/80">
                           {tag.tag}
                         </span>
                       ))}
@@ -83,7 +83,7 @@ export default function PostPage(props: { params: { id: string } }) {
                   <div class="mt-8">
                     <a
                       href="/"
-                      class="inline-flex items-center text-sm text-black/48 transition hover:text-black"
+                      class="inline-flex items-center text-sm text-tl-fg/48 transition hover:text-tl-fg"
                     >
                       &larr; 돌아가기
                     </a>

@@ -24,6 +24,7 @@
 - Runtime / Package Manager: **Bun**
 - Framework: **SolidStart 2** (`@solidjs/start`, Vite 네이티브, `nitro` 프리셋 `static`으로 순수 정적 export)
 - UI: Solid 1.x, Tailwind CSS 4
+- Design System: [`@tyange-labs/design-system`](https://git.tyange.com/tyange-labs/design-system) — 색상·타이포·간격 등 시맨틱 토큰(`--tl-*`)을 git 의존성으로 가져와 씀. 라이트/다크는 `dark-auto.css`로 OS 설정을 따름
 - Markdown: **unified 파이프라인** (`remark-parse` + `remark-gfm` → `rehype-raw` + `rehype-sanitize` + `rehype-shiki`) — CMS에 저장된 마크다운 본문을 raw HTML 허용 + XSS 방지 상태로 렌더. 동적 `import()`로만 불러와 클라이언트 번들에 섞여 들어가지 않는다(자세한 이유는 `AGENTS.md`)
 - Icons: `simple-icons` (GitHub SVG 인라인)
 - Fonts: Pretendard subset (woff2) + Monaspace Neon, `font-display: swap`
@@ -81,4 +82,5 @@ bun run build
 - **unified 마크다운 파이프라인**: CMS 본문에 raw HTML(예: 커스텀 div, 임베드)을 허용하기 위해 `rehype-raw`를 통과시키되, 직후 `rehype-sanitize`로 XSS 차단한다. 코드 하이라이트는 `shiki`로 서버(프리렌더)에서만 미리 렌더한다 — 동적 `import()`로 감싸 클라이언트 번들에는 아예 포함되지 않는다.
 - **Bento Grid 레이아웃**: "작업" 섹션은 hero(`featured_projects[0]`, CMS에서 순서로 제어) + 2×N 그리드(CMS 시스템, 개인 사이트, 기타)로 구성해 중요도에 따른 시각적 우선순위를 준다.
 - **폰트 최적화**: Pretendard는 한국어 subset만 woff2로 번들하고 `font-display: swap`으로 첫 텍스트 페인트 지연을 막는다. `next/font/local`이 하던 등록을 `src/app.css`의 수동 `@font-face`로 대체했다.
+- **디자인 시스템 토큰으로 전면 교체**: 기존에 하드코딩돼 있던 `black`/`white` 및 그 위에 얹은 불투명도(`text-black/56` 등)를 `@tyange-labs/design-system`의 시맨틱 토큰(`text-tl-fg`, `bg-tl-surface`, `border-tl-border` 등)으로 바꿨다. 불투명도 계층은 `tl-fg`/`tl-bg` 위에 그대로 유지해(`text-tl-fg/56`) 기존의 세밀한 명암 단계를 잃지 않으면서도 라이트/다크 전환에 자동으로 대응하게 했다. Tailwind Typography(`prose`)는 다크에서 무시되는 자체 색을 쓰므로 `dark:prose-invert`를 반드시 같이 켠다.
 

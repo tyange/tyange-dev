@@ -1,4 +1,7 @@
 @import "tailwindcss";
+@import "@tyange-labs/design-system/tokens.css";
+@import "@tyange-labs/design-system/dark-auto.css";
+@import "@tyange-labs/design-system/theme.css";
 @plugin "@tailwindcss/typography";
 
 /* next/font/local이 자동으로 해주던 self-host 등록을 수동 @font-face로 대체.
@@ -74,20 +77,10 @@
   font-display: swap;
 }
 
-:root {
-  --background: #f0ede8;
-  --foreground: #111111;
-  --font-pretendard:
-    "Pretendard Variable", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-monaspace: "Monaspace Neon", ui-monospace, "SF Mono", Menlo, monospace;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-pretendard);
-  --font-mono: var(--font-monaspace);
-}
+/* 색상·간격·라디우스 등은 design-system의 --tl-* 토큰을 그대로 쓴다
+   (tokens.css/dark-auto.css/theme.css 임포트 참고). --tl-font-sans은 이미
+   "Pretendard Variable"을 가리키므로 아래 @font-face로 그 이름의 실제 파일만
+   등록해주면 된다 — 별도 폰트 변수를 새로 만들 필요가 없다. */
 
 * {
   box-sizing: border-box;
@@ -99,9 +92,9 @@ html {
 
 body {
   min-height: 100vh;
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-pretendard), sans-serif;
+  background: var(--tl-bg);
+  color: var(--tl-fg);
+  font-family: var(--tl-font-sans), sans-serif;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   /* 한국어 줄바꿈: 어절(공백 단위)을 유지해 단어 중간이 끊기지 않게 한다.
@@ -116,11 +109,11 @@ a {
 }
 
 ::selection {
-  background: rgba(16, 16, 16, 0.12);
+  background: var(--tl-accent-soft);
 }
 
 .prose :not(pre) > code {
-  background-color: rgba(0, 0, 0, 0.06);
+  background-color: var(--tl-surface-sunken);
   padding: 0.2em 0.4em;
   border-radius: 0.25rem;
 }

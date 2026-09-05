@@ -13,6 +13,29 @@
 그리고 실제로 `.output/public/`에 예상한 라우트 수만큼 `index.html`이 생겼는지
 반드시 둘 다 확인한다 — 한쪽만 보고 판단하지 말 것.
 
+이 버그는 우리만 겪은 게 아니라 GitHub에 공개적으로 기록된 회귀다:
+- 근본 원인 이슈: [`nitrojs/nitro#3843`](https://github.com/nitrojs/nitro/issues/3843)
+  "Static preset doesn't work" — Nitro의 Vite 빌더(`src/build/vite/prod.ts`)가
+  `nitro.options.static`을 확인 안 하고 서버 번들을 무조건 빌드하려 해서, 서버
+  엔트리가 없는 static 프리셋에서 Vite가 `index.html`을 SSR 엔트리로 오인하고
+  거부하는 게 원인. Rolldown/Rollup 빌더엔 이미 있던 `if (!nitro.options.static)`
+  가드가 Vite 빌더에만 빠져 있었다.
+- SolidStart에서의 재현: [`solidjs/solid-start#2288`](https://github.com/solidjs/solid-start/issues/2288)
+  — `@solidjs/start 2.0.0` + **`nitro 3.0.260610-beta`**(우리가 처음 걸렸던 바로 그
+  버전) + `vite 8.2.1` 조합에서 우리와 정확히 같은 증상(프리렌더는 성공, 그 다음
+  "Nitro 환경 빌드" 단계에서만 실패)이 박제돼 있다.
+- 같은 근본 원인이 Nuxt에서도 재현됨: [`nuxt/nuxt#36023`](https://github.com/nuxt/nuxt/issues/36023)
+  — Nitro 자체 버그이지 SolidStart나 Nuxt 어느 한쪽의 문제가 아니라는 뜻. Nuxt
+  쪽 이슈는 "우리 문제 아님, nitrojs/nitro#3843 중복"으로 닫혔다.
+- 수정 PR: [`nitrojs/nitro#4509`](https://github.com/nitrojs/nitro/pull/4509)
+  "fix(vite): skip server bundle for static presets" — **2026-08-20 머지**.
+  `builder.build()` 호출 전에 static 프리셋 여부를 확인하는 가드를 추가하고
+  전용 테스트(`test/vite/static-preset.test.ts`)를 신설했다.
+- npm 배포 이력(`npm view nitro time`) 확인 결과 `3.0.260610-beta`(6/10 배포) 다음
+  베타가 `3.0.260903-beta`(9/3 배포)이고 그 사이엔 배포가 없었다 — PR이 8/20에
+  머지됐으니 **9/3 배포판이 수정을 포함한 첫 배포**다. 우리가 실측(빌드 성공/실패)으로
+  찾은 버전 경계와 정확히 일치한다.
+
 새 API를 쓰기 전엔 `node_modules/nitro/dist/types/index.d.mts`,
 `node_modules/nitro/dist/vite.d.mts`, `node_modules/@solidjs/router/dist/*.d.ts`를
 직접 열어 실제 타입을 확인한다. 훈련 데이터에 없는 버전이라 기억에 의존하면 틀린다.
@@ -59,3 +82,14 @@ unified/rehype/shiki 전체)이 클라이언트 번들에 실제로 들어가 �
 불러오는데 그 경로가 이런 정적 배포 환경에서 항상 안전한 건 아니다(자세한 근거는
 `src/lib/markdown.ts` 주석 참고). `langs`도 실제 쓰는 언어로 좁혀 불필요한 청크를
 줄인다.
+
+## 디자인 시스템 적용 후: `.prose`엔 `dark:prose-invert`를 꼭 같이 켠다
+
+`@tyange-labs/design-system`의 `dark-auto.css`로 다크 모드를 넣은 뒤,
+`prose prose-neutral`로 렌더되는 CMS 마크다운(인트로, 글 본문)의 `<h1>`/`<li>` 같은
+요소가 다크 배경에서 거의 안 보이는 문제가 있었다 — Tailwind Typography의
+`prose-neutral` 기본 색(`--tw-prose-headings` 등)은 라이트 전용 고정값이라
+`prose-p:text-tl-fg`처럼 특정 태그만 오버라이드해도 나머지 태그는 그대로 남는다.
+`dark:prose-invert`를 같이 켜면 Tailwind v4 기본 `dark:`(= `prefers-color-scheme`)
+조건에서 전체 프로즈 팔레트가 다크에 맞게 뒤집힌다 — `dark-auto.css`와 트리거
+조건이 정확히 같아서 그대로 맞아떨어진다.
