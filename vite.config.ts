@@ -1,3 +1,4 @@
+import { fileURLToPath } from "node:url";
 import { defineConfig } from "vite";
 import { nitro } from "nitro/vite";
 import { solidStart } from "@solidjs/start/config";
@@ -13,6 +14,20 @@ export default defineConfig(async ({ command }) => {
   const devPosts = command === "build" ? await getDevPosts() : [];
 
   return {
+    // tsconfig의 "@/*" paths만으로는 부족하다 — nitro@3.0.260903-beta dev 서버가
+    // SSR 모듈을 env-runner(NodeWorkerEnvRunner/SelfEnvRunner 등)를 거쳐 fetchModule
+    // RPC로 돌리는데, isServer 분기 안 동적 import(`await import("@/lib/home-data")`,
+    // src/routes/index.tsx·posts/[id].tsx)가 그 경로를 타면 "@/*" 별칭이 안 풀려
+    // "Cannot find module '@/lib/home-data'"로 500이 난다(devServer.runner를
+    // "self"로 바꿔도 동일 — 워커냐 아니냐의 문제가 아니라 fetchModule 자체가
+    // 별칭을 못 찾는 문제). resolve.alias로 직접 등록하면 어떤 environment를 타든
+    // Vite 코어 리졸버가 처리해 통과한다. 정적 import(`@/lib/cms-api` 등)는 이
+    // alias 없이도 이미 잘 됐었다 — 동적 import만 걸리는 문제.
+    resolve: {
+      alias: {
+        "@": fileURLToPath(new URL("./src", import.meta.url)),
+      },
+    },
     plugins: [
       solidStart(),
       tailwindcss(),

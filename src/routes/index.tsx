@@ -1,4 +1,4 @@
-import { createAsync, query, type RouteDefinition } from "@solidjs/router";
+import { A, createAsync, query, type RouteDefinition } from "@solidjs/router";
 import { For, Show } from "solid-js";
 import { isServer } from "solid-js/web";
 import type { PortfolioProject } from "@/lib/cms-api";
@@ -186,6 +186,10 @@ function HomeBody(props: {
               <a href={`mailto:${content.identity.email}`} class="transition hover:text-tl-fg">
                 {content.identity.email}
               </a>
+              <span class="text-tl-fg/16">|</span>
+              <A href="/kobalte-preview" class="transition hover:text-tl-fg">
+                Kobalte 프리뷰
+              </A>
             </div>
           </div>
         </header>
