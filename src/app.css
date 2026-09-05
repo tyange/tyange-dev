@@ -77,8 +77,8 @@
 :root {
   --background: #f0ede8;
   --foreground: #111111;
-  --font-pretendard: "Pretendard Variable", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Roboto, sans-serif;
+  --font-pretendard:
+    "Pretendard Variable", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-monaspace: "Monaspace Neon", ui-monospace, "SF Mono", Menlo, monospace;
 }
 

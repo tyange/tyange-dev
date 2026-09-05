@@ -24,7 +24,11 @@ export default defineConfig(async ({ command }) => {
         // package.json에 고정한다.
         static: true,
         prerender: {
-          routes: ["/", ...devPosts.map((post) => `/posts/${post.post_id}`)],
+          routes: [
+            "/",
+            "/api/home.json",
+            ...devPosts.flatMap((post) => [`/posts/${post.post_id}`, `/api/posts/${post.post_id}`]),
+          ],
           crawlLinks: true,
           failOnError: true,
         },
