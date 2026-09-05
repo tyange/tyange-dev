@@ -58,19 +58,31 @@ bun run build
 
 ## 배포
 
-배포 워크플로는 `.github/workflows/main.yml`에 있습니다.
+배포 워크플로는 `.forgejo/workflows/deploy.yml`에 있습니다(**Forgejo Actions** —
+`.github/workflows`가 아니다. GitHub Actions 마켓플레이스 액션도 `DEFAULT_ACTIONS_URL`
+기본값이 `data.forgejo.org`라 `uses:`를 전부 `https://github.com/...` 완전한 URL로
+써야 한다).
 
-필수 GitHub Actions secrets:
+전제 조건:
+
+- git.tyange.com에 **Forgejo Actions runner**가 등록·구동 중이어야 함
+  (`runs-on: ubuntu-latest` 라벨로 등록)
+- 러너 실행 환경에 `@tyange-labs/design-system`(git+ssh 의존성)을 내려받을 수
+  있는 SSH 키가 있어야 함 — 아래 `DESIGN_SYSTEM_DEPLOY_KEY` secret 참고
+
+필수 Forgejo Actions secrets (저장소 Settings → Actions → Secrets):
 
 - `HOST`
 - `USER_NAME`
 - `PRIVATE_SSH_KEY`
+- `DESIGN_SYSTEM_DEPLOY_KEY` — git.tyange.com의 design-system 저장소를 읽을 수
+  있는 SSH 개인키(읽기 전용 deploy key 권장)
 
-필수 GitHub Actions variables:
+필수 Forgejo Actions variables:
 
 - `DEPLOY_PATH`
 
-선택 GitHub Actions variable:
+선택 Forgejo Actions variable:
 
 - `CMS_API_BASE_URL`
 

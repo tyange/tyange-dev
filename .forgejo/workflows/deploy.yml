@@ -7,17 +7,29 @@ on:
 
 jobs:
   deploy:
+    # forgejo-runner 등록 시 이 라벨(ubuntu-latest)을 붙여야 이 job을 받는다.
+    # 다른 라벨로 등록했다면 여기도 맞춰서 바꿀 것.
     runs-on: ubuntu-latest
     environment: deploy on aws
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: https://github.com/actions/checkout@v4
 
       - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
+        uses: https://github.com/oven-sh/setup-bun@v2
         with:
           bun-version: latest
+
+      # design-system이 git+ssh 의존성이라 이 러너에 git.tyange.com용 SSH 키가
+      # 필요하다. deploy key(읽기 전용)를 새로 만들어 DESIGN_SYSTEM_DEPLOY_KEY
+      # secret으로 등록해 두는 걸 권장.
+      - name: Set up SSH for git dependency
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DESIGN_SYSTEM_DEPLOY_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H git.tyange.com >> ~/.ssh/known_hosts
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
@@ -28,7 +40,7 @@ jobs:
           CMS_API_BASE_URL: "${{ vars.CMS_API_BASE_URL || 'https://tyange.com/api/cms' }}"
 
       - name: Prepare deploy directory
-        uses: appleboy/ssh-action@v1.0.3
+        uses: https://github.com/appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER_NAME }}
@@ -38,7 +50,7 @@ jobs:
             find "${{ vars.DEPLOY_PATH }}" -mindepth 1 -maxdepth 1 -exec rm -rf {} +
 
       - name: Deploy static files via SCP
-        uses: appleboy/scp-action@v0.1.7
+        uses: https://github.com/appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER_NAME }}
