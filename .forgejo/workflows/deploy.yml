@@ -7,9 +7,9 @@ on:
 
 jobs:
   deploy:
-    # forgejo-runner 등록 시 이 라벨(ubuntu-latest)을 붙여야 이 job을 받는다.
-    # 다른 라벨로 등록했다면 여기도 맞춰서 바꿀 것.
-    runs-on: ubuntu-latest
+    # forgejo-runner를 `--label self-hosted:host`로 띄웠다는 전제 — Docker 없이
+    # 러너를 구동하는 서버에서 직접 실행된다(격리 없음). 라벨을 바꿨다면 여기도 맞출 것.
+    runs-on: self-hosted
     environment: deploy on aws
 
     steps:
@@ -23,13 +23,20 @@ jobs:
 
       # design-system이 git+ssh 의존성이라 이 러너에 git.tyange.com용 SSH 키가
       # 필요하다. deploy key(읽기 전용)를 새로 만들어 DESIGN_SYSTEM_DEPLOY_KEY
-      # secret으로 등록해 두는 걸 권장.
+      # secret으로 등록해 두는 걸 권장. 러너가 self-hosted:host(격리 없음)라
+      # 이 서버에 이미 있을 수 있는 기본 키(~/.ssh/id_ed25519)를 절대 건드리지
+      # 않도록 전용 파일명 + Host 블록으로 분리한다.
       - name: Set up SSH for git dependency
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.DESIGN_SYSTEM_DEPLOY_KEY }}" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
+          echo "${{ secrets.DESIGN_SYSTEM_DEPLOY_KEY }}" > ~/.ssh/tyange_dev_ci_deploy_key
+          chmod 600 ~/.ssh/tyange_dev_ci_deploy_key
           ssh-keyscan -H git.tyange.com >> ~/.ssh/known_hosts
+          cat >> ~/.ssh/config <<'SSHCONFIG'
+          Host git.tyange.com
+            IdentityFile ~/.ssh/tyange_dev_ci_deploy_key
+            IdentitiesOnly yes
+          SSHCONFIG
 
       - name: Install dependencies
         run: bun install --frozen-lockfile

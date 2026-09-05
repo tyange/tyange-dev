@@ -65,8 +65,11 @@ bun run build
 
 전제 조건:
 
-- git.tyange.com에 **Forgejo Actions runner**가 등록·구동 중이어야 함
-  (`runs-on: ubuntu-latest` 라벨로 등록)
+- git.tyange.com에 **Forgejo Actions runner**가 `self-hosted:host` 라벨로
+  구동 중이어야 함(Docker 없이 러너를 띄우는 서버에서 직접 실행 — 격리 없음).
+  `forgejo-runner daemon --url ... --uuid ... --token-url ... --label self-hosted:host`
+- 저장소 Settings → Units → Overview에서 **Actions 체크박스**가 켜져 있어야 함
+  (러너가 있어도 이게 꺼져 있으면 워크플로를 안 읽는다)
 - 러너 실행 환경에 `@tyange-labs/design-system`(git+ssh 의존성)을 내려받을 수
   있는 SSH 키가 있어야 함 — 아래 `DESIGN_SYSTEM_DEPLOY_KEY` secret 참고
 
