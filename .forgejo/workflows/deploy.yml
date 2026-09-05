@@ -30,7 +30,12 @@ jobs:
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.DESIGN_SYSTEM_DEPLOY_KEY }}" > ~/.ssh/tyange_dev_ci_deploy_key
+          # CRLF로 붙여넣어졌으면(웹 폼/에디터를 거치며 흔히 생김) OpenSSH가
+          # "error in libcrypto"로 키 파싱 자체를 거부한다 — LF로 강제 정규화.
+          sed -i 's/\r$//' ~/.ssh/tyange_dev_ci_deploy_key
           chmod 600 ~/.ssh/tyange_dev_ci_deploy_key
+          ssh-keygen -y -f ~/.ssh/tyange_dev_ci_deploy_key > /dev/null \
+            && echo "key OK" || echo "::error::DESIGN_SYSTEM_DEPLOY_KEY가 유효한 개인키가 아님"
           ssh-keyscan -H git.tyange.com >> ~/.ssh/known_hosts
           cat >> ~/.ssh/config <<'SSHCONFIG'
           Host git.tyange.com
