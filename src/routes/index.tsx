@@ -1,4 +1,4 @@
-import { A, createAsync, query, type RouteDefinition } from "@solidjs/router";
+import { createAsync, query, type RouteDefinition } from "@solidjs/router";
 import { Accordion } from "@kobalte/core/accordion";
 import { Arrow as TooltipArrow, Tooltip } from "@kobalte/core/tooltip";
 import { For, Show } from "solid-js";
@@ -187,10 +187,6 @@ function HomeBody(props: {
               <a href={`mailto:${content.identity.email}`} class="transition hover:text-tl-fg">
                 {content.identity.email}
               </a>
-              <span class="text-tl-fg/16">|</span>
-              <A href="/kobalte-preview" class="transition hover:text-tl-fg">
-                Kobalte 프리뷰
-              </A>
             </div>
           </div>
         </header>
