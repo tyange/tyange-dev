@@ -1,8 +1,7 @@
 import { A, createAsync, query, type RouteDefinition } from "@solidjs/router";
 import { For, Show } from "solid-js";
 import { isServer } from "solid-js/web";
-import type { PortfolioProject } from "@/lib/cms-api";
-import type { HomeData } from "@/lib/home-data";
+import type { HomeData, RenderedPortfolioProject } from "@/lib/home-data";
 import { siGithub } from "simple-icons";
 
 function SectionLabel(props: { title: string; description?: string }) {
@@ -32,7 +31,7 @@ function GitHubIcon() {
   );
 }
 
-function ProjectCardLinks(props: { project: PortfolioProject }) {
+function ProjectCardLinks(props: { project: RenderedPortfolioProject }) {
   const visibleLinks = () => props.project.links.filter((link) => isVisibleProjectLink(link.label));
   return (
     <div class="flex gap-1">
@@ -151,7 +150,7 @@ function HomeBody(props: {
   const devProject = pickGrouped("tyange-dev");
   const dashboardProject = pickGrouped("tyange-dashboard");
   const personalSites = [blogProject, devProject, dashboardProject].filter(
-    (p): p is PortfolioProject => p != null,
+    (p): p is RenderedPortfolioProject => p != null,
   );
   const groupedSlugs = new Set([
     "tyange-cms",
@@ -268,13 +267,12 @@ function HomeBody(props: {
                               {item.period ? (
                                 <p class="text-sm font-medium text-tl-fg/48">{item.period}</p>
                               ) : null}
-                              <div class="space-y-2 pt-1">
-                                {item.bullets.map((bullet) => (
-                                  <p class="max-w-4xl pl-4 text-sm leading-7 text-tl-fg/62">
-                                    - {bullet}
-                                  </p>
-                                ))}
-                              </div>
+                              <div
+                                class="prose prose-neutral dark:prose-invert prose-sm max-w-4xl pl-4 prose-p:my-1 prose-ul:my-1 prose-li:my-0.5 prose-li:text-tl-fg/62 prose-p:text-tl-fg/62"
+                                // rehype-sanitize를 통과한 뒤의 HTML만 여기 들어온다(renderMarkdown 참고)
+                                // eslint-disable-next-line solid/no-innerhtml
+                                innerHTML={item.bulletsHtml}
+                              />
                             </section>
                           ))}
                         </div>
@@ -296,18 +294,17 @@ function HomeBody(props: {
                   <h3 class="text-3xl font-bold tracking-[-0.06em] text-tl-fg">{hero.title}</h3>
                   <p class="mt-2 text-sm text-tl-fg/48">{hero.period}</p>
 
-                  <p class="mt-5 max-w-3xl text-sm leading-7 text-tl-fg/62">{hero.summary}</p>
+                  <div
+                    class="prose prose-neutral dark:prose-invert prose-sm mt-5 max-w-3xl prose-p:text-tl-fg/62"
+                    // eslint-disable-next-line solid/no-innerhtml
+                    innerHTML={hero.summaryHtml}
+                  />
 
-                  {hero.highlights.length > 0 && (
-                    <ul class="mt-5 space-y-2.5">
-                      {hero.highlights.map((h) => (
-                        <li class="flex gap-2.5 text-sm leading-6 text-tl-fg/56">
-                          <span class="shrink-0 text-tl-fg/20">—</span>
-                          <span>{h}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
+                  <div
+                    class="prose prose-neutral dark:prose-invert prose-sm mt-5 max-w-3xl prose-ul:my-0 prose-li:my-1 prose-li:text-tl-fg/56"
+                    // eslint-disable-next-line solid/no-innerhtml
+                    innerHTML={hero.highlightsHtml}
+                  />
 
                   <div class="mt-8 flex flex-wrap items-center gap-3">
                     {hero.links
@@ -346,7 +343,7 @@ function HomeBody(props: {
                     </div>
                     <div class="grid gap-3 sm:grid-cols-2">
                       {[cms, cmsApi]
-                        .filter((p): p is PortfolioProject => p != null)
+                        .filter((p): p is RenderedPortfolioProject => p != null)
                         .map((project) => (
                           <article class="rounded-xl bg-tl-fg/2 p-5 transition-colors duration-200 hover:bg-tl-fg/5">
                             <div class="flex items-start justify-between">
@@ -356,7 +353,11 @@ function HomeBody(props: {
                               <ProjectCardLinks project={project} />
                             </div>
                             <p class="mt-1 text-xs text-tl-fg/44">{project.period}</p>
-                            <p class="mt-3 text-sm leading-6 text-tl-fg/58">{project.summary}</p>
+                            <div
+                              class="prose prose-neutral dark:prose-invert prose-sm mt-3 max-w-none prose-p:my-0 prose-p:text-tl-fg/58"
+                              // eslint-disable-next-line solid/no-innerhtml
+                              innerHTML={project.summaryHtml}
+                            />
                             <div class="mt-4 flex flex-wrap gap-1.5">
                               {project.stack.map((tag) => (
                                 <span class="rounded-full bg-tl-fg/4 px-2.5 py-1 text-[0.6875rem] text-tl-fg/44">
@@ -417,7 +418,11 @@ function HomeBody(props: {
                         </div>
                         <ProjectCardLinks project={project} />
                       </div>
-                      <p class="mt-3 text-sm leading-7 text-tl-fg/62">{project.summary}</p>
+                      <div
+                        class="prose prose-neutral dark:prose-invert prose-sm mt-3 max-w-none prose-p:my-0 prose-p:text-tl-fg/62"
+                        // eslint-disable-next-line solid/no-innerhtml
+                        innerHTML={project.summaryHtml}
+                      />
                       <div class="mt-auto flex flex-wrap gap-2 pt-5">
                         {project.stack.map((tag) => (
                           <span class="rounded-full bg-tl-fg/4 px-3 py-1.5 text-xs text-tl-fg/48">

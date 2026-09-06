@@ -19,16 +19,19 @@ export type PortfolioProject = {
   slug: string;
   title: string;
   period: string;
+  /** Markdown. renderMarkdown()으로 변환해서 쓴다(홈 데이터 조립 시 summaryHtml로). */
   summary: string;
   stack: string[];
-  highlights: string[];
+  /** Markdown 불릿 리스트(`- 항목` 줄바꿈). 예전 highlights: string[]을 대체(2026-09). */
+  highlights_markdown: string;
   links: PortfolioLink[];
 };
 
 export type PortfolioCareerItem = {
   title: string;
   period?: string | null;
-  bullets: string[];
+  /** Markdown 불릿 리스트. 예전 bullets: string[]을 대체(2026-09). */
+  bullets_markdown: string;
 };
 
 export type PortfolioCareerCompany = {
