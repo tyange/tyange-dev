@@ -1,4 +1,6 @@
 import { A, createAsync, query, type RouteDefinition } from "@solidjs/router";
+import { Accordion } from "@kobalte/core/accordion";
+import { Arrow as TooltipArrow, Tooltip } from "@kobalte/core/tooltip";
 import { For, Show } from "solid-js";
 import { isServer } from "solid-js/web";
 import type { HomeData, RenderedPortfolioProject } from "@/lib/home-data";
@@ -212,21 +214,32 @@ function HomeBody(props: {
             {introTechStack.length > 0 && (
               <div class="mt-10 flex flex-wrap items-center gap-5">
                 {introTechStack.map((item) => (
-                  <span
-                    class="flex items-center gap-2 text-sm text-tl-fg/70 transition hover:text-tl-fg"
-                    title={item.name}
-                  >
-                    {item.icon_url && (
-                      <img
-                        src={item.icon_url}
-                        alt={item.name}
-                        width={20}
-                        height={20}
-                        class="h-5 w-5 shrink-0 object-contain"
-                      />
-                    )}
-                    <span class="hidden sm:inline">{item.name}</span>
-                  </span>
+                  <Tooltip openDelay={200}>
+                    <Tooltip.Trigger
+                      as="span"
+                      class="flex items-center gap-2 text-sm text-tl-fg/70 transition hover:text-tl-fg"
+                    >
+                      {item.icon_url && (
+                        <img
+                          src={item.icon_url}
+                          alt={item.name}
+                          width={20}
+                          height={20}
+                          class="h-5 w-5 shrink-0 object-contain"
+                        />
+                      )}
+                      <span class="hidden sm:inline">{item.name}</span>
+                    </Tooltip.Trigger>
+                    {/* 모바일(sm 미만)은 이름이 숨겨지고 아이콘만 보이는데, 툴팁은 hover
+                       기반이라 터치에선 안 뜬다 — 그래도 데스크톱 폭이 좁아 이름이 잘리는
+                       경우엔 여전히 도움이 돼서 sm:hidden 조건 없이 항상 붙여둔다. */}
+                    <Tooltip.Portal>
+                      <Tooltip.Content class="z-50 rounded-lg border border-tl-border bg-tl-surface px-3 py-1.5 text-xs text-tl-fg shadow-lg">
+                        <TooltipArrow />
+                        {item.name}
+                      </Tooltip.Content>
+                    </Tooltip.Portal>
+                  </Tooltip>
                 ))}
               </div>
             )}
@@ -245,40 +258,58 @@ function HomeBody(props: {
                 </div>
 
                 <div class="mt-8 max-w-[64rem]">
-                  <div class="space-y-10">
-                    {careerProfile.companies.map((company) => (
-                      <section class="min-w-0 space-y-2">
-                        <h1 class="text-[1.05rem] font-bold tracking-[-0.02em] text-tl-fg">
-                          {company.company}
-                        </h1>
-                        <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm font-medium text-tl-fg/48">
-                          <span>{company.period}</span>
-                          <span>{company.employment_type}</span>
-                          <span>{company.role}</span>
-                          {company.position ? <span>{company.position}</span> : null}
-                        </div>
-
-                        <div class="mt-6 divide-y divide-tl-border pl-5 sm:pl-8">
-                          {company.items.map((item) => (
-                            <section class="space-y-2 py-5 first:pt-0 last:pb-0">
-                              <h2 class="text-[1.05rem] font-bold tracking-[-0.02em] text-tl-fg">
-                                {item.title}
-                              </h2>
-                              {item.period ? (
-                                <p class="text-sm font-medium text-tl-fg/48">{item.period}</p>
-                              ) : null}
-                              <div
-                                class="prose prose-neutral dark:prose-invert prose-sm max-w-4xl pl-4 prose-p:my-1 prose-ul:my-1 prose-li:my-0.5 prose-li:text-tl-fg/62 prose-p:text-tl-fg/62"
-                                // rehype-sanitize를 통과한 뒤의 HTML만 여기 들어온다(renderMarkdown 참고)
-                                // eslint-disable-next-line solid/no-innerhtml
-                                innerHTML={item.bulletsHtml}
-                              />
-                            </section>
-                          ))}
-                        </div>
-                      </section>
+                  {/* 회사별로 접고 펼칠 수 있게 함 — 예전엔 전부 펼쳐진 채로만 보여서
+                     경력이 길면 스크롤이 길어졌다. defaultValue에 전체 회사를 넣어서
+                     기존과 같은(전부 펼쳐진) 첫 화면은 유지한다. */}
+                  <Accordion
+                    multiple
+                    collapsible
+                    defaultValue={careerProfile.companies.map((_, index) => `company-${index}`)}
+                    class="space-y-6"
+                  >
+                    {careerProfile.companies.map((company, companyIndex) => (
+                      <Accordion.Item value={`company-${companyIndex}`} class="min-w-0">
+                        <Accordion.Header>
+                          <Accordion.Trigger class="group flex w-full items-start justify-between gap-3 text-left">
+                            <div class="space-y-2">
+                              <h1 class="text-[1.05rem] font-bold tracking-[-0.02em] text-tl-fg">
+                                {company.company}
+                              </h1>
+                              <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm font-medium text-tl-fg/48">
+                                <span>{company.period}</span>
+                                <span>{company.employment_type}</span>
+                                <span>{company.role}</span>
+                                {company.position ? <span>{company.position}</span> : null}
+                              </div>
+                            </div>
+                            <span class="mt-1 shrink-0 text-tl-fg/40 transition-transform group-data-[expanded]:rotate-180">
+                              ⌄
+                            </span>
+                          </Accordion.Trigger>
+                        </Accordion.Header>
+                        <Accordion.Content>
+                          <div class="divide-y divide-tl-border pl-5 sm:pl-8">
+                            {company.items.map((item) => (
+                              <section class="space-y-2 py-5 first:pt-4 last:pb-0">
+                                <h2 class="text-[1.05rem] font-bold tracking-[-0.02em] text-tl-fg">
+                                  {item.title}
+                                </h2>
+                                {item.period ? (
+                                  <p class="text-sm font-medium text-tl-fg/48">{item.period}</p>
+                                ) : null}
+                                <div
+                                  class="prose prose-neutral dark:prose-invert prose-sm max-w-4xl pl-4 prose-p:my-1 prose-ul:my-1 prose-li:my-0.5 prose-li:text-tl-fg/62 prose-p:text-tl-fg/62"
+                                  // rehype-sanitize를 통과한 뒤의 HTML만 여기 들어온다(renderMarkdown 참고)
+                                  // eslint-disable-next-line solid/no-innerhtml
+                                  innerHTML={item.bulletsHtml}
+                                />
+                              </section>
+                            ))}
+                          </div>
+                        </Accordion.Content>
+                      </Accordion.Item>
                     ))}
-                  </div>
+                  </Accordion>
                 </div>
               </>
             ) : null}

@@ -1,7 +1,9 @@
 import { A } from "@solidjs/router";
+import { Accordion as KAccordion } from "@kobalte/core/accordion";
 import { Dialog as KDialog } from "@kobalte/core/dialog";
 import { Select as KSelect } from "@kobalte/core/select";
 import { Switch as KSwitch } from "@kobalte/core/switch";
+import { Arrow as KTooltipArrow, Tooltip as KTooltip } from "@kobalte/core/tooltip";
 import { createSignal, type JSX } from "solid-js";
 
 // Kobalte(SolidJS 헤드리스 UI)를 tyange-dev의 헤드리스 UI 프리미티브로 정식 채택
@@ -12,8 +14,15 @@ import { createSignal, type JSX } from "solid-js";
 // 게 이 라우트의 원래 목적이었다. design-system 저장소 자체의 컴포넌트 패키지화
 // (docs/decisions.md의 "다음 단계")는 git 의존성 서브디렉토리 구조·dist/ 커밋+CI
 // 게이트·solid export 조건 유지 같은 선행 인프라가 필요한 별개의 더 큰 작업이라
-// 이번엔 손대지 않았다 — 여기 3종(Switch/Select/Dialog)은 tyange-dev에 직접 설치된
-// 상태로 남는다.
+// 이번엔 손대지 않았다.
+//
+// Accordion/Tooltip은 2026-09-06에 실제 홈 화면(경력 섹션 접기, 기술 스택 툴팁)에
+// 적용하면서 추가됐다. 주의: Kobalte의 compound export는 루트 컴포넌트 자체가
+// `Accordion`/`Tooltip`이고 `.Root`는 없다(Content/Header/Item/Trigger만 하위
+// 프로퍼티로 붙어있음) — `<Accordion.Root>`처럼 쓰면 SSR에서 "Comp is not a
+// function"으로 조용히 깨진다(prerender 자체는 "성공"으로 찍혀서 발견하기
+// 까다로움). Switch/Select/Dialog와 똑같이 컴파운드 객체를 루트 엘리먼트로 직접
+// 쓴다.
 
 const SORT_OPTIONS = ["최신순", "오래된순", "이름순"] as const;
 
@@ -101,14 +110,54 @@ function SelectDemo() {
   );
 }
 
+function AccordionDemo() {
+  return (
+    <KAccordion multiple collapsible defaultValue={["item-0"]} class="space-y-2">
+      {["첫 번째 항목", "두 번째 항목"].map((title, index) => (
+        <KAccordion.Item value={`item-${index}`} class="rounded-lg border border-tl-border">
+          <KAccordion.Header>
+            <KAccordion.Trigger class="group flex w-full items-center justify-between px-3 py-2 text-left text-sm text-tl-fg/72">
+              {title}
+              <span class="text-tl-fg/40 transition-transform group-data-[expanded]:rotate-180">
+                ⌄
+              </span>
+            </KAccordion.Trigger>
+          </KAccordion.Header>
+          <KAccordion.Content class="px-3 pb-3 text-sm leading-6 text-tl-fg/56">
+            펼치고 접는 상태·키보드 탐색을 Kobalte가 관리한다. 홈 화면의 경력
+            섹션에 실사용 중.
+          </KAccordion.Content>
+        </KAccordion.Item>
+      ))}
+    </KAccordion>
+  );
+}
+
+function TooltipDemo() {
+  return (
+    <KTooltip openDelay={200}>
+      <KTooltip.Trigger class="inline-flex items-center gap-1.5 rounded-full border border-tl-border px-4 py-2 text-sm text-tl-fg/72 transition hover:bg-tl-fg/4 hover:text-tl-fg">
+        마우스를 올려보세요
+      </KTooltip.Trigger>
+      <KTooltip.Portal>
+        <KTooltip.Content class="z-50 rounded-lg border border-tl-border bg-tl-surface px-3 py-1.5 text-xs text-tl-fg shadow-lg">
+          <KTooltipArrow />
+          위치 계산(popper)과 hover 지연을 Kobalte가 관리한다.
+        </KTooltip.Content>
+      </KTooltip.Portal>
+    </KTooltip>
+  );
+}
+
 export default function KobaltePreview() {
   return (
     <main class="min-h-screen bg-tl-bg px-6 py-16 text-tl-fg sm:px-10 lg:px-12">
       <div class="mx-auto max-w-3xl space-y-4">
         <h1 class="text-2xl font-bold tracking-[-0.05em] text-tl-fg">Kobalte 프리뷰</h1>
         <p class="max-w-xl text-sm leading-7 text-tl-fg/56">
-          헤드리스 UI 라이브러리 Kobalte로 만든 컴포넌트 3종. 로직·접근성은
-          Kobalte가, 스타일은 design-system 토큰이 맡는다.
+          헤드리스 UI 라이브러리 Kobalte로 만든 컴포넌트 5종. 로직·접근성은
+          Kobalte가, 스타일은 design-system 토큰이 맡는다. Accordion/Tooltip은
+          홈 화면(경력 섹션, 기술 스택 아이콘)에 실제로 쓰이고 있다.
         </p>
 
         <div class="grid gap-4 pt-4 sm:grid-cols-2">
@@ -122,6 +171,14 @@ export default function KobaltePreview() {
 
           <PreviewCard title="Dialog" description="포커스 트랩·바깥 클릭/ESC 닫기를 Kobalte가 관리한다.">
             <DialogDemo />
+          </PreviewCard>
+
+          <PreviewCard title="Accordion" description="펼침/접힘 상태와 키보드 탐색을 Kobalte가 관리한다.">
+            <AccordionDemo />
+          </PreviewCard>
+
+          <PreviewCard title="Tooltip" description="hover 지연과 위치 계산(popper)을 Kobalte가 관리한다.">
+            <TooltipDemo />
           </PreviewCard>
         </div>
 
