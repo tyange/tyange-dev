@@ -19,10 +19,9 @@ export type PortfolioProject = {
   slug: string;
   title: string;
   period: string;
-  /** Markdown. renderMarkdown()으로 변환해서 쓴다(홈 데이터 조립 시 summaryHtml로). */
-  summary: string;
-  /** Markdown 불릿 리스트(`- 항목` 줄바꿈). 예전 highlights: string[]을 대체(2026-09). */
-  highlights_markdown: string;
+  /** 프로젝트 설명 전체(문단 + 불릿) Markdown. 홈 데이터 조립 시 renderMarkdown()으로
+   * 변환해 bodyHtml로 쓴다. 예전 summary + highlights_markdown 두 필드를 병합(2026-09). */
+  body_markdown: string;
   links: PortfolioLink[];
   /** 이 프로젝트가 속한 폴더 이름. 같은 값끼리 한 묶음(라벨 아래 카드 그리드)으로
    * 렌더된다. 빈 문자열이면 단독 카드. 예전 stack: string[]을 대체(2026-09). */

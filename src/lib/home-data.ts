@@ -7,12 +7,11 @@ import type {
 import { getDevPosts, getPortfolio } from "./cms-api";
 import { renderMarkdown } from "./markdown";
 
-// featured_projects[].summary/highlights_markdown, career.companies[].career_items_markdown은
+// featured_projects[].body_markdown, career.companies[].career_items_markdown은
 // intro.content와 마찬가지로 markdown 문자열이다(2026-09, tyange-cms-api 쪽 스키마 변경에
 // 맞춤) — 여기서 renderMarkdown()으로 HTML을 미리 구워 *Html 필드로 붙여서 내려보낸다.
 export type RenderedPortfolioProject = PortfolioProject & {
-  summaryHtml: string;
-  highlightsHtml: string;
+  bodyHtml: string;
 };
 
 export type RenderedPortfolioCareerCompany = PortfolioCareerCompany & {
@@ -43,11 +42,8 @@ export type HomeData = {
 };
 
 async function renderProject(project: PortfolioProject): Promise<RenderedPortfolioProject> {
-  const [summaryHtml, highlightsHtml] = await Promise.all([
-    renderMarkdown(project.summary),
-    renderMarkdown(project.highlights_markdown),
-  ]);
-  return { ...project, summaryHtml, highlightsHtml };
+  const bodyHtml = await renderMarkdown(project.body_markdown ?? "");
+  return { ...project, bodyHtml };
 }
 
 async function renderCareerCompany(

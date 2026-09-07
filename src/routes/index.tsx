@@ -88,19 +88,13 @@ function ProjectCard(props: { project: RenderedPortfolioProject; inFolder?: bool
         </div>
         <ProjectCardLinks project={props.project} />
       </div>
-      <Show when={props.project.summaryHtml}>
+      <Show when={props.project.bodyHtml}>
         <div
-          class={`prose prose-neutral dark:prose-invert prose-sm mt-4 max-w-3xl prose-p:my-0 prose-p:text-tl-fg/58 ${compact() ? "" : "prose-p:leading-7"}`}
-          // rehype-sanitize를 통과한 HTML만 들어온다(renderMarkdown 참고)
+          class={`prose prose-neutral dark:prose-invert prose-sm mt-4 max-w-3xl prose-p:my-2 prose-p:text-tl-fg/58 prose-ul:my-2 prose-li:my-1 prose-li:text-tl-fg/52 ${compact() ? "" : "prose-p:leading-7"}`}
+          // rehype-sanitize를 통과한 HTML만 들어온다(renderMarkdown 참고). body_markdown =
+          // 문단 + 불릿을 한 마크다운으로 병합한 것(2026-09).
           // eslint-disable-next-line solid/no-innerhtml
-          innerHTML={props.project.summaryHtml}
-        />
-      </Show>
-      <Show when={props.project.highlightsHtml}>
-        <div
-          class="prose prose-neutral dark:prose-invert prose-sm mt-3 max-w-2xl prose-ul:my-0 prose-li:my-1 prose-li:text-tl-fg/52"
-          // eslint-disable-next-line solid/no-innerhtml
-          innerHTML={props.project.highlightsHtml}
+          innerHTML={props.project.bodyHtml}
         />
       </Show>
     </article>
