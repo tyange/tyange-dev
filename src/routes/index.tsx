@@ -284,24 +284,13 @@ function HomeBody(props: {
                           </Accordion.Trigger>
                         </Accordion.Header>
                         <Accordion.Content>
-                          <div class="divide-y divide-tl-border pl-5 sm:pl-8">
-                            {company.items.map((item) => (
-                              <section class="space-y-2 py-5 first:pt-4 last:pb-0">
-                                <h2 class="text-[1.05rem] font-bold tracking-[-0.02em] text-tl-fg">
-                                  {item.title}
-                                </h2>
-                                {item.period ? (
-                                  <p class="text-sm font-medium text-tl-fg/48">{item.period}</p>
-                                ) : null}
-                                <div
-                                  class="prose prose-neutral dark:prose-invert prose-sm max-w-4xl pl-4 prose-p:my-1 prose-ul:my-1 prose-li:my-0.5 prose-li:text-tl-fg/62 prose-p:text-tl-fg/62"
-                                  // rehype-sanitize를 통과한 뒤의 HTML만 여기 들어온다(renderMarkdown 참고)
-                                  // eslint-disable-next-line solid/no-innerhtml
-                                  innerHTML={item.bulletsHtml}
-                                />
-                              </section>
-                            ))}
-                          </div>
+                          <div
+                            class="prose prose-neutral dark:prose-invert prose-sm max-w-4xl pl-5 sm:pl-8 prose-headings:mt-6 prose-headings:mb-2 prose-headings:text-[1.05rem] prose-headings:font-bold prose-headings:tracking-[-0.02em] prose-headings:text-tl-fg prose-p:my-1 prose-ul:my-1 prose-li:my-0.5 prose-li:text-tl-fg/62 prose-p:text-tl-fg/62 prose-em:text-sm prose-em:not-italic prose-em:font-medium prose-em:text-tl-fg/48"
+                            // career_items_markdown(회사별 세부 경력 전체)을 렌더한 HTML.
+                            // rehype-sanitize를 통과한 뒤의 HTML만 여기 들어온다(renderMarkdown 참고)
+                            // eslint-disable-next-line solid/no-innerhtml
+                            innerHTML={company.careerItemsHtml}
+                          />
                         </Accordion.Content>
                       </Accordion.Item>
                     ))}

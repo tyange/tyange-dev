@@ -27,20 +27,14 @@ export type PortfolioProject = {
   links: PortfolioLink[];
 };
 
-export type PortfolioCareerItem = {
-  title: string;
-  period?: string | null;
-  /** Markdown 불릿 리스트. 예전 bullets: string[]을 대체(2026-09). */
-  bullets_markdown: string;
-};
-
 export type PortfolioCareerCompany = {
   company: string;
   period: string;
   employment_type: string;
   role: string;
   position: string;
-  items: PortfolioCareerItem[];
+  /** 회사별 세부 경력을 통째로 담는 Markdown. 예전 items: PortfolioCareerItem[]을 대체(2026-09). */
+  career_items_markdown: string;
 };
 
 export type PortfolioCareerSection = {

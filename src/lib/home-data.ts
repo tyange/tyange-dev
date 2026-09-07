@@ -1,6 +1,5 @@
 import type {
   PortfolioCareerCompany,
-  PortfolioCareerItem,
   PortfolioCareerSection,
   PortfolioDocument,
   PortfolioProject,
@@ -8,7 +7,7 @@ import type {
 import { getDevPosts, getPortfolio } from "./cms-api";
 import { renderMarkdown } from "./markdown";
 
-// featured_projects[].summary/highlights_markdown, career...items[].bullets_markdown은
+// featured_projects[].summary/highlights_markdown, career.companies[].career_items_markdown은
 // intro.content와 마찬가지로 markdown 문자열이다(2026-09, tyange-cms-api 쪽 스키마 변경에
 // 맞춤) — 여기서 renderMarkdown()으로 HTML을 미리 구워 *Html 필드로 붙여서 내려보낸다.
 export type RenderedPortfolioProject = PortfolioProject & {
@@ -16,12 +15,8 @@ export type RenderedPortfolioProject = PortfolioProject & {
   highlightsHtml: string;
 };
 
-export type RenderedPortfolioCareerItem = PortfolioCareerItem & {
-  bulletsHtml: string;
-};
-
-export type RenderedPortfolioCareerCompany = Omit<PortfolioCareerCompany, "items"> & {
-  items: RenderedPortfolioCareerItem[];
+export type RenderedPortfolioCareerCompany = PortfolioCareerCompany & {
+  careerItemsHtml: string;
 };
 
 export type RenderedPortfolioCareerSection = Omit<PortfolioCareerSection, "companies"> & {
@@ -55,16 +50,11 @@ async function renderProject(project: PortfolioProject): Promise<RenderedPortfol
   return { ...project, summaryHtml, highlightsHtml };
 }
 
-async function renderCareerItem(item: PortfolioCareerItem): Promise<RenderedPortfolioCareerItem> {
-  const bulletsHtml = await renderMarkdown(item.bullets_markdown);
-  return { ...item, bulletsHtml };
-}
-
 async function renderCareerCompany(
   company: PortfolioCareerCompany,
 ): Promise<RenderedPortfolioCareerCompany> {
-  const items = await Promise.all(company.items.map(renderCareerItem));
-  return { ...company, items };
+  const careerItemsHtml = await renderMarkdown(company.career_items_markdown ?? "");
+  return { ...company, careerItemsHtml };
 }
 
 async function renderCareerSection(
