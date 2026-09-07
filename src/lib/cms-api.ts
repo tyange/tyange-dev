@@ -21,10 +21,12 @@ export type PortfolioProject = {
   period: string;
   /** Markdown. renderMarkdown()으로 변환해서 쓴다(홈 데이터 조립 시 summaryHtml로). */
   summary: string;
-  stack: string[];
   /** Markdown 불릿 리스트(`- 항목` 줄바꿈). 예전 highlights: string[]을 대체(2026-09). */
   highlights_markdown: string;
   links: PortfolioLink[];
+  /** 이 프로젝트가 속한 폴더 이름. 같은 값끼리 한 묶음(라벨 아래 카드 그리드)으로
+   * 렌더된다. 빈 문자열이면 단독 카드. 예전 stack: string[]을 대체(2026-09). */
+  folder: string;
 };
 
 export type PortfolioCareerCompany = {

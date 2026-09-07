@@ -61,6 +61,52 @@ function ProjectCardLinks(props: { project: RenderedPortfolioProject }) {
   );
 }
 
+// 모든 프로젝트가 쓰는 단일 카드. hero/나머지 구분 없이 이거 하나로 통일됐다.
+// inFolder면 폴더 안에서 2열 그리드로 촘촘히 들어가는 컴팩트 버전.
+function ProjectCard(props: { project: RenderedPortfolioProject; inFolder?: boolean }) {
+  const compact = () => props.inFolder ?? false;
+  return (
+    <article
+      class={
+        compact()
+          ? "rounded-[14px] bg-tl-fg/[0.025] p-[22px]"
+          : "rounded-[20px] border border-tl-border bg-tl-surface/40 p-8"
+      }
+    >
+      <div class="flex items-start justify-between gap-4">
+        <div class="min-w-0">
+          <h3
+            class={`font-bold tracking-[-0.02em] text-tl-fg ${compact() ? "text-[15.5px]" : "text-lg"}`}
+          >
+            {props.project.title}
+          </h3>
+          <Show when={props.project.period}>
+            <p class={`mt-1.5 text-tl-fg/44 ${compact() ? "text-xs" : "text-[13px]"}`}>
+              {props.project.period}
+            </p>
+          </Show>
+        </div>
+        <ProjectCardLinks project={props.project} />
+      </div>
+      <Show when={props.project.summaryHtml}>
+        <div
+          class={`prose prose-neutral dark:prose-invert prose-sm mt-4 max-w-3xl prose-p:my-0 prose-p:text-tl-fg/58 ${compact() ? "" : "prose-p:leading-7"}`}
+          // rehype-sanitize를 통과한 HTML만 들어온다(renderMarkdown 참고)
+          // eslint-disable-next-line solid/no-innerhtml
+          innerHTML={props.project.summaryHtml}
+        />
+      </Show>
+      <Show when={props.project.highlightsHtml}>
+        <div
+          class="prose prose-neutral dark:prose-invert prose-sm mt-3 max-w-2xl prose-ul:my-0 prose-li:my-1 prose-li:text-tl-fg/52"
+          // eslint-disable-next-line solid/no-innerhtml
+          innerHTML={props.project.highlightsHtml}
+        />
+      </Show>
+    </article>
+  );
+}
+
 // "use server" 없음 — 이 사이트는 서버 없는 정적 배포라 RPC를 받아줄 곳이 없다.
 // 대신 isServer로 직접 분기한다: 서버(프리렌더)에서는 getHomeData()를 직접 호출하고,
 // 브라우저(클라이언트 사이드 이동)에서는 그 결과를 구워둔 정적 파일(/api/home.json,
@@ -138,32 +184,30 @@ function HomeBody(props: {
   const introHtml = props.introHtml;
   const careerProfile = content.career;
 
-  // Hero: featured_projects 배열의 첫 프로젝트(= CMS의 1순위)를 풀폭으로 크게 보여준다.
-  // 즉 큰 카드는 CMS에서 순서만 바꿔 제어한다(과거의 slug "inert" 고정 방식 대체).
-  const hero = content.featured_projects[0] ?? null;
-  const heroSlug = hero?.slug;
+  // featured_projects를 순서대로 훑어 project.folder 단위로 묶는다. folder가 빈
+  // 프로젝트는 그 자리에 단독 카드, folder가 있으면 같은 이름 블록에 모은다
+  // (폴더 블록의 위치 = 첫 멤버가 등장한 위치). 예전엔 여기서 slug를 하드코딩해
+  // ("tyange-cms" 등) 그룹을 만들었는데 그걸 CMS 데이터(folder)로 옮겼다.
+  type ProjectBlock =
+    | { kind: "solo"; project: RenderedPortfolioProject }
+    | { kind: "folder"; name: string; projects: RenderedPortfolioProject[] };
 
-  const projectMap = new Map(content.featured_projects.map((p) => [p.slug, p]));
-  // Hero로 뽑힌 프로젝트는 아래 그룹/폴백에서 중복 렌더되지 않도록 제외한다.
-  const pickGrouped = (slug: string) => (slug === heroSlug ? undefined : projectMap.get(slug));
-  const cms = pickGrouped("tyange-cms");
-  const cmsApi = pickGrouped("tyange-cms-api");
-  const blogProject = pickGrouped("tyange-blog");
-  const devProject = pickGrouped("tyange-dev");
-  const dashboardProject = pickGrouped("tyange-dashboard");
-  const personalSites = [blogProject, devProject, dashboardProject].filter(
-    (p): p is RenderedPortfolioProject => p != null,
-  );
-  const groupedSlugs = new Set([
-    "tyange-cms",
-    "tyange-cms-api",
-    "tyange-blog",
-    "tyange-dev",
-    "tyange-dashboard",
-  ]);
-  const otherProjects = content.featured_projects.filter(
-    (p) => p.slug !== heroSlug && !groupedSlugs.has(p.slug),
-  );
+  const projectBlocks: ProjectBlock[] = [];
+  const folderBlockIndex = new Map<string, number>();
+  for (const project of content.featured_projects) {
+    const folder = project.folder?.trim() ?? "";
+    if (!folder) {
+      projectBlocks.push({ kind: "solo", project });
+      continue;
+    }
+    const at = folderBlockIndex.get(folder);
+    if (at === undefined) {
+      folderBlockIndex.set(folder, projectBlocks.length);
+      projectBlocks.push({ kind: "folder", name: folder, projects: [project] });
+    } else {
+      (projectBlocks[at] as Extract<ProjectBlock, { kind: "folder" }>).projects.push(project);
+    }
+  }
 
   const introTechStack = content.intro?.tech_stack ?? [];
 
@@ -301,155 +345,27 @@ function HomeBody(props: {
           </section>
 
           <section id="work" class="pb-14">
-            <h2 class="mb-8 text-2xl font-bold tracking-[-0.05em] text-tl-fg">작업</h2>
+            <h2 class="mb-9 text-2xl font-bold tracking-[-0.05em] text-tl-fg">개인 프로젝트</h2>
 
-            <div class="space-y-4">
-              {/* Hero: featured_projects[0] — full width */}
-              {hero && (
-                <article class="rounded-2xl border border-tl-border bg-tl-surface/40 p-8 lg:p-10">
-                  <h3 class="text-3xl font-bold tracking-[-0.06em] text-tl-fg">{hero.title}</h3>
-                  <p class="mt-2 text-sm text-tl-fg/48">{hero.period}</p>
-
-                  <div
-                    class="prose prose-neutral dark:prose-invert prose-sm mt-5 max-w-3xl prose-p:text-tl-fg/62"
-                    // eslint-disable-next-line solid/no-innerhtml
-                    innerHTML={hero.summaryHtml}
-                  />
-
-                  <div
-                    class="prose prose-neutral dark:prose-invert prose-sm mt-5 max-w-3xl prose-ul:my-0 prose-li:my-1 prose-li:text-tl-fg/56"
-                    // eslint-disable-next-line solid/no-innerhtml
-                    innerHTML={hero.highlightsHtml}
-                  />
-
-                  <div class="mt-8 flex flex-wrap items-center gap-3">
-                    {hero.links
-                      .filter((link) => isVisibleProjectLink(link.label))
-                      .map((link) => (
-                        <a
-                          href={link.url}
-                          target="_blank"
-                          rel="noreferrer"
-                          class="inline-flex items-center gap-1.5 rounded-full border border-tl-border px-4 py-2 text-sm text-tl-fg/64 transition hover:bg-tl-fg/4 hover:text-tl-fg"
-                        >
-                          {link.label}
-                          <span class="text-[0.65rem]">↗</span>
-                        </a>
-                      ))}
-                  </div>
-
-                  <div class="mt-6 flex flex-wrap gap-2">
-                    {hero.stack.map((tag) => (
-                      <span class="rounded-full bg-tl-fg/4 px-3 py-1.5 text-xs text-tl-fg/48">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </article>
-              )}
-
-              {/* Two groups below — side by side */}
-              <div class="grid gap-4 lg:grid-cols-2">
-                {/* CMS System Group */}
-                {(cms || cmsApi) && (
-                  <div class="rounded-2xl border border-tl-border bg-tl-surface/40 p-7">
-                    <div class="mb-5">
-                      <h3 class="text-lg font-bold tracking-[-0.03em] text-tl-fg">CMS 시스템</h3>
-                      <p class="mt-1 text-sm text-tl-fg/48">블로그를 구동하는 콘텐츠 관리 시스템</p>
-                    </div>
-                    <div class="grid gap-3 sm:grid-cols-2">
-                      {[cms, cmsApi]
-                        .filter((p): p is RenderedPortfolioProject => p != null)
-                        .map((project) => (
-                          <article class="rounded-xl bg-tl-fg/2 p-5 transition-colors duration-200 hover:bg-tl-fg/5">
-                            <div class="flex items-start justify-between">
-                              <h4 class="font-bold tracking-[-0.02em] text-tl-fg">
-                                {project.title}
-                              </h4>
-                              <ProjectCardLinks project={project} />
-                            </div>
-                            <p class="mt-1 text-xs text-tl-fg/44">{project.period}</p>
-                            <div
-                              class="prose prose-neutral dark:prose-invert prose-sm mt-3 max-w-none prose-p:my-0 prose-p:text-tl-fg/58"
-                              // eslint-disable-next-line solid/no-innerhtml
-                              innerHTML={project.summaryHtml}
-                            />
-                            <div class="mt-4 flex flex-wrap gap-1.5">
-                              {project.stack.map((tag) => (
-                                <span class="rounded-full bg-tl-fg/4 px-2.5 py-1 text-[0.6875rem] text-tl-fg/44">
-                                  {tag}
-                                </span>
-                              ))}
-                            </div>
-                          </article>
-                        ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Personal Sites Group */}
-                {personalSites.length > 0 && (
-                  <div class="rounded-2xl border border-tl-border bg-tl-surface/40 p-7">
-                    <div class="mb-5">
-                      <h3 class="text-lg font-bold tracking-[-0.03em] text-tl-fg">개인 사이트</h3>
-                      <p class="mt-1 text-sm text-tl-fg/48">블로그, 포트폴리오, 운영 대시보드</p>
-                    </div>
-                    <div class="space-y-3">
-                      {personalSites.map((project) => (
-                        <article class="rounded-xl bg-tl-fg/2 p-5 transition-colors duration-200 hover:bg-tl-fg/5">
-                          <div class="flex items-start justify-between gap-2">
-                            <div class="min-w-0">
-                              <h4 class="font-bold tracking-[-0.02em] text-tl-fg">
-                                {project.title}
-                              </h4>
-                              <p class="mt-1 text-xs text-tl-fg/44">{project.period}</p>
-                            </div>
-                            <ProjectCardLinks project={project} />
-                          </div>
-                          <div class="mt-3 flex flex-wrap gap-1.5">
-                            {project.stack.map((tag) => (
-                              <span class="rounded-full bg-tl-fg/4 px-2.5 py-1 text-[0.6875rem] text-tl-fg/44">
-                                {tag}
-                              </span>
-                            ))}
-                          </div>
-                        </article>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Fallback */}
-              {otherProjects.length > 0 && (
-                <div class="grid gap-4 lg:grid-cols-2">
-                  {otherProjects.map((project) => (
-                    <article class="flex flex-col rounded-2xl border border-tl-border bg-tl-surface/40 p-7">
-                      <div class="flex items-start justify-between">
-                        <div>
-                          <h3 class="text-lg font-bold tracking-[-0.03em] text-tl-fg">
-                            {project.title}
-                          </h3>
-                          <p class="mt-1 text-sm text-tl-fg/48">{project.period}</p>
-                        </div>
-                        <ProjectCardLinks project={project} />
+            <div class="flex flex-col gap-5">
+              <For each={projectBlocks}>
+                {(block) =>
+                  block.kind === "solo" ? (
+                    <ProjectCard project={block.project} />
+                  ) : (
+                    <section class="rounded-[20px] border border-tl-border bg-tl-surface/25 p-7">
+                      <h3 class="mb-5 text-base font-bold tracking-[-0.03em] text-tl-fg">
+                        {block.name}
+                      </h3>
+                      <div class="grid gap-3.5 sm:grid-cols-2">
+                        <For each={block.projects}>
+                          {(project) => <ProjectCard project={project} inFolder />}
+                        </For>
                       </div>
-                      <div
-                        class="prose prose-neutral dark:prose-invert prose-sm mt-3 max-w-none prose-p:my-0 prose-p:text-tl-fg/62"
-                        // eslint-disable-next-line solid/no-innerhtml
-                        innerHTML={project.summaryHtml}
-                      />
-                      <div class="mt-auto flex flex-wrap gap-2 pt-5">
-                        {project.stack.map((tag) => (
-                          <span class="rounded-full bg-tl-fg/4 px-3 py-1.5 text-xs text-tl-fg/48">
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    </article>
-                  ))}
-                </div>
-              )}
+                    </section>
+                  )
+                }
+              </For>
             </div>
           </section>
 
