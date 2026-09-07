@@ -4,7 +4,6 @@ import { Arrow as TooltipArrow, Tooltip } from "@kobalte/core/tooltip";
 import { For, Show } from "solid-js";
 import { isServer } from "solid-js/web";
 import type { HomeData, RenderedPortfolioProject } from "@/lib/home-data";
-import { siGithub } from "simple-icons";
 
 function SectionLabel(props: { title: string; description?: string }) {
   return (
@@ -17,47 +16,44 @@ function SectionLabel(props: { title: string; description?: string }) {
   );
 }
 
-function isGitHubRepositoryLink(label: string, url: string) {
-  return label === "저장소" && url.includes("github.com");
-}
-
 function isVisibleProjectLink(label: string) {
   return label !== "서비스";
 }
 
-function GitHubIcon() {
-  return (
-    <svg aria-hidden="true" viewBox="0 0 24 24" class="h-4 w-4 fill-current">
-      <path d={siGithub.path} />
-    </svg>
-  );
-}
-
-function ProjectCardLinks(props: { project: RenderedPortfolioProject }) {
+// 프로젝트 링크는 전부 같은 pill 버튼으로 — 텍스트만이라 링크로 안 보인다는 피드백 반영.
+// 저장소가 GitHub → Forgejo(git.tyange.com)로 옮겨서 GitHub 로고도 걷어냄. 호스트 무관한
+// 외부 링크 화살표만 붙인다.
+function ProjectCardLinks(props: { project: RenderedPortfolioProject; compact?: boolean }) {
   const visibleLinks = () => props.project.links.filter((link) => isVisibleProjectLink(link.label));
   return (
-    <div class="flex gap-1">
-      <For each={visibleLinks()}>
-        {(link) => (
-          <a
-            href={link.url}
-            target="_blank"
-            rel="noreferrer"
-            class="inline-flex items-center rounded-full p-2 text-tl-fg/36 transition hover:text-tl-fg/64"
-            aria-label={isGitHubRepositoryLink(link.label, link.url) ? "GitHub 저장소" : link.label}
-          >
-            {isGitHubRepositoryLink(link.label, link.url) ? (
-              <>
-                <GitHubIcon />
-                <span class="sr-only">{link.label}</span>
-              </>
-            ) : (
-              <span class="text-xs">{link.label}</span>
-            )}
-          </a>
-        )}
-      </For>
-    </div>
+    <Show when={visibleLinks().length > 0}>
+      <div class={`flex flex-wrap gap-2 ${props.compact ? "mt-4" : "mt-6"}`}>
+        <For each={visibleLinks()}>
+          {(link) => (
+            <a
+              href={link.url}
+              target="_blank"
+              rel="noreferrer"
+              class="inline-flex items-center gap-1.5 rounded-full border border-tl-border px-3 py-1.5 text-xs font-medium text-tl-fg/72 transition hover:border-tl-fg/24 hover:bg-tl-fg/5 hover:text-tl-fg"
+            >
+              {link.label}
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 12 12"
+                class="size-2.5 shrink-0"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M3 9L9 3M4.5 3H9v4.5" />
+              </svg>
+            </a>
+          )}
+        </For>
+      </div>
+    </Show>
   );
 }
 
@@ -73,20 +69,17 @@ function ProjectCard(props: { project: RenderedPortfolioProject; inFolder?: bool
           : "rounded-[20px] border border-tl-border bg-tl-surface/40 p-8"
       }
     >
-      <div class="flex items-start justify-between gap-4">
-        <div class="min-w-0">
-          <h3
-            class={`font-bold tracking-[-0.02em] text-tl-fg ${compact() ? "text-[15.5px]" : "text-lg"}`}
-          >
-            {props.project.title}
-          </h3>
-          <Show when={props.project.period}>
-            <p class={`mt-1.5 text-tl-fg/44 ${compact() ? "text-xs" : "text-[13px]"}`}>
-              {props.project.period}
-            </p>
-          </Show>
-        </div>
-        <ProjectCardLinks project={props.project} />
+      <div class="min-w-0">
+        <h3
+          class={`font-bold tracking-[-0.02em] text-tl-fg ${compact() ? "text-[15.5px]" : "text-lg"}`}
+        >
+          {props.project.title}
+        </h3>
+        <Show when={props.project.period}>
+          <p class={`mt-1.5 text-tl-fg/44 ${compact() ? "text-xs" : "text-[13px]"}`}>
+            {props.project.period}
+          </p>
+        </Show>
       </div>
       <Show when={props.project.bodyHtml}>
         <div
@@ -97,6 +90,7 @@ function ProjectCard(props: { project: RenderedPortfolioProject; inFolder?: bool
           innerHTML={props.project.bodyHtml}
         />
       </Show>
+      <ProjectCardLinks project={props.project} compact={compact()} />
     </article>
   );
 }
