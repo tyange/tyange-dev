@@ -146,3 +146,19 @@ a {
     animation: tl-page-in 260ms ease both;
   }
 }
+
+/* 개인 프로젝트 리스트(src/routes/index.tsx ProjectRow)의 Kobalte Accordion.Content.
+   높이 애니메이션은 --kb-accordion-content-height(JS로 세팅됨)에 의존해 프리렌더
+   HTML에서 깜빡일 수 있어 쓰지 않는다 — 펼칠 때만 짧은 페이드+슬라이드로 처리.
+   (경력 섹션 Accordion과 동선을 맞춘 최소 연출) */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes tl-accordion-in {
+    from {
+      opacity: 0;
+      transform: translateY(-0.25rem);
+    }
+  }
+  .tl-accordion-content[data-expanded] {
+    animation: tl-accordion-in 220ms ease;
+  }
+}

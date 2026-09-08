@@ -23,11 +23,11 @@ function isVisibleProjectLink(label: string) {
 // 프로젝트 링크는 전부 같은 pill 버튼으로 — 텍스트만이라 링크로 안 보인다는 피드백 반영.
 // 저장소가 GitHub → Forgejo(git.tyange.com)로 옮겨서 GitHub 로고도 걷어냄. 호스트 무관한
 // 외부 링크 화살표만 붙인다.
-function ProjectCardLinks(props: { project: RenderedPortfolioProject; compact?: boolean }) {
+function ProjectLinks(props: { project: RenderedPortfolioProject }) {
   const visibleLinks = () => props.project.links.filter((link) => isVisibleProjectLink(link.label));
   return (
     <Show when={visibleLinks().length > 0}>
-      <div class={`flex flex-wrap gap-2 ${props.compact ? "mt-4" : "mt-6"}`}>
+      <div class="mt-5 flex flex-wrap gap-2">
         <For each={visibleLinks()}>
           {(link) => (
             <a
@@ -57,41 +57,59 @@ function ProjectCardLinks(props: { project: RenderedPortfolioProject; compact?: 
   );
 }
 
-// 모든 프로젝트가 쓰는 단일 카드. hero/나머지 구분 없이 이거 하나로 통일됐다.
-// inFolder면 폴더 안에서 2열 그리드로 촘촘히 들어가는 컴팩트 버전.
-function ProjectCard(props: { project: RenderedPortfolioProject; inFolder?: boolean }) {
-  const compact = () => props.inFolder ?? false;
+// 개인 프로젝트 리스트의 한 행. 카드·구분선 없이, hover / 펼침일 때만 아주 옅은 fill이
+// 깔려 그때만 카드처럼 뜬다(Linear·Vercel 계열 리스트). 펼치면 body_markdown + 링크.
+// 경력 섹션과 같은 Kobalte Accordion(multiple)을 쓴다 — period는 CMS에서 실질적으로
+// 한 줄 태그라인 역할을 한다("내부 CMS", "콘텐츠 인프라" 등).
+function ProjectRow(props: { project: RenderedPortfolioProject }) {
   return (
-    <article
-      class={
-        compact()
-          ? "rounded-[14px] bg-tl-fg/[0.025] p-[22px]"
-          : "rounded-[20px] border border-tl-border bg-tl-surface/40 p-8"
-      }
+    <Accordion.Item
+      value={props.project.slug}
+      class="group rounded-[14px] transition-colors hover:bg-tl-fg/[0.055] data-[expanded]:bg-tl-fg/[0.03]"
     >
-      <div class="min-w-0">
-        <h3
-          class={`font-bold tracking-[-0.02em] text-tl-fg ${compact() ? "text-[15.5px]" : "text-lg"}`}
-        >
-          {props.project.title}
-        </h3>
-        <Show when={props.project.period}>
-          <p class={`mt-1.5 text-tl-fg/44 ${compact() ? "text-xs" : "text-[13px]"}`}>
-            {props.project.period}
-          </p>
-        </Show>
-      </div>
-      <Show when={props.project.bodyHtml}>
-        <div
-          class={`prose prose-neutral dark:prose-invert prose-sm mt-4 max-w-3xl prose-p:my-2 prose-p:text-tl-fg/58 prose-ul:my-2 prose-li:my-1 prose-li:text-tl-fg/52 ${compact() ? "" : "prose-p:leading-7"}`}
-          // rehype-sanitize를 통과한 HTML만 들어온다(renderMarkdown 참고). body_markdown =
-          // 문단 + 불릿을 한 마크다운으로 병합한 것(2026-09).
-          // eslint-disable-next-line solid/no-innerhtml
-          innerHTML={props.project.bodyHtml}
-        />
-      </Show>
-      <ProjectCardLinks project={props.project} compact={compact()} />
-    </article>
+      <Accordion.Header>
+        <Accordion.Trigger class="flex w-full items-start px-3.5 py-5 text-left outline-none focus-visible:rounded-[14px] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-tl-fg/40">
+          <span class="min-w-0 flex-1">
+            <span class="flex items-center justify-between gap-4">
+              <span class="text-[1.08rem] font-bold tracking-[-0.02em] text-tl-fg">
+                {props.project.title}
+              </span>
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 16 16"
+                class="size-[15px] shrink-0 text-tl-fg/40 transition-[transform,color] duration-200 group-hover:text-tl-fg/70 group-data-[expanded]:rotate-180"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M4 6l4 4 4-4" />
+              </svg>
+            </span>
+            <Show when={props.project.period}>
+              <span class="mt-1.5 block text-[0.9rem] leading-normal text-tl-fg/46">
+                {props.project.period}
+              </span>
+            </Show>
+          </span>
+        </Accordion.Trigger>
+      </Accordion.Header>
+      <Accordion.Content class="tl-accordion-content overflow-hidden">
+        <div class="max-w-[40rem] px-3.5 pt-0.5 pb-7">
+          <Show when={props.project.bodyHtml}>
+            <div
+              class="prose prose-neutral dark:prose-invert prose-sm max-w-none prose-p:my-2 prose-p:leading-7 prose-p:text-tl-fg/58 prose-ul:my-2 prose-li:my-1 prose-li:text-tl-fg/52"
+              // rehype-sanitize를 통과한 HTML만 들어온다(renderMarkdown 참고). body_markdown =
+              // 문단 + 불릿을 한 마크다운으로 병합한 것(2026-09).
+              // eslint-disable-next-line solid/no-innerhtml
+              innerHTML={props.project.bodyHtml}
+            />
+          </Show>
+          <ProjectLinks project={props.project} />
+        </div>
+      </Accordion.Content>
+    </Accordion.Item>
   );
 }
 
@@ -196,6 +214,13 @@ function HomeBody(props: {
       (projectBlocks[at] as Extract<ProjectBlock, { kind: "folder" }>).projects.push(project);
     }
   }
+
+  // 첫 프로젝트 하나만 펼친 채로 시작한다 — 리스트는 스캔 가능하게 두되 페이지가
+  // 열렸을 때 본문이 아예 안 보이지는 않도록.
+  const firstBlock = projectBlocks[0];
+  const defaultOpenProjects = firstBlock
+    ? [firstBlock.kind === "solo" ? firstBlock.project.slug : firstBlock.projects[0].slug]
+    : [];
 
   const introTechStack = content.intro?.tech_stack ?? [];
 
@@ -335,28 +360,29 @@ function HomeBody(props: {
           </section>
 
           <section id="work" class="pb-14">
-            <h2 class="mb-9 text-2xl font-bold tracking-[-0.05em] text-tl-fg">개인 프로젝트</h2>
+            <h2 class="mb-8 text-2xl font-bold tracking-[-0.05em] text-tl-fg">개인 프로젝트</h2>
 
-            <div class="flex flex-col gap-5">
+            {/* 카드 없이 리스트 + 펼치기. folder는 박스가 아니라 조용한 그룹 라벨로만.
+               -mx-3.5로 행 fill이 텍스트보다 살짝 좌우로 번지게 하고, 본문 텍스트는
+               px-3.5로 상쇄돼 섹션 제목과 좌측 정렬을 맞춘다. */}
+            <Accordion multiple collapsible defaultValue={defaultOpenProjects} class="-mx-3.5">
               <For each={projectBlocks}>
                 {(block) =>
                   block.kind === "solo" ? (
-                    <ProjectCard project={block.project} />
+                    <ProjectRow project={block.project} />
                   ) : (
-                    <section class="rounded-[20px] border border-tl-border bg-tl-surface/25 p-7">
-                      <h3 class="mb-5 text-base font-bold tracking-[-0.03em] text-tl-fg">
+                    <>
+                      <p class="mt-10 mb-1.5 px-3.5 text-xs font-medium uppercase tracking-[0.14em] text-tl-fg/40 first:mt-2">
                         {block.name}
-                      </h3>
-                      <div class="grid gap-3.5 sm:grid-cols-2">
-                        <For each={block.projects}>
-                          {(project) => <ProjectCard project={project} inFolder />}
-                        </For>
-                      </div>
-                    </section>
+                      </p>
+                      <For each={block.projects}>
+                        {(project) => <ProjectRow project={project} />}
+                      </For>
+                    </>
                   )
                 }
               </For>
-            </div>
+            </Accordion>
           </section>
 
           <section
