@@ -203,7 +203,7 @@ function HomeBody(props: {
     <>
       <main class="min-h-screen bg-tl-bg text-tl-fg">
         <header>
-          <div class="mx-auto flex w-full max-w-6xl items-center px-6 py-5 sm:px-10 lg:px-12">
+          <div class="mx-auto flex w-full max-w-6xl items-center px-6 py-4 sm:px-10 lg:px-12">
             <div class="flex flex-wrap items-center gap-x-3 gap-y-2 text-[1.05rem] text-tl-fg/86">
               <span class="font-medium">{content.identity.name}</span>
               <span class="text-tl-fg/16">|</span>
@@ -225,7 +225,9 @@ function HomeBody(props: {
 
         <div class="mx-auto flex w-full max-w-6xl flex-col px-6 sm:px-10 lg:px-12">
           {/* ── Intro ── */}
-          <section class="w-full pt-16 pb-20">
+          {/* pt는 header(py-4)와 합쳐 h1 위 여백을 만든다. h1 아래(→ 본문 문단)
+             간격이 prose 기준 ~32px라, 위도 그 리듬에 맞춰(16+32=48px) 균형을 잡는다. */}
+          <section class="w-full pt-8 pb-20">
             {introHtml ? (
               <div
                 class="prose prose-neutral dark:prose-invert max-w-3xl break-keep prose-p:text-[1.625rem] prose-p:font-bold prose-p:leading-[1.45] prose-p:tracking-[-0.03em] prose-p:text-tl-fg sm:prose-p:text-[2rem] lg:prose-p:text-[2.25rem]"
