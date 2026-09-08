@@ -123,27 +123,33 @@ a {
   content: none;
 }
 
-/* 페이지 전환(src/app.tsx usePageTransitions) — 브라우저 기본 크로스페이드보다
-   조금 빠르고 짧은 상하 이동을 더한다. reduced-motion이면 애니메이션 자체를 안 켠다
-   (app.tsx에서 startViewTransition을 아예 호출하지 않음 + 여기서도 이중 가드). */
+/* 페이지 전환(src/app.tsx usePageTransitions).
+   이전엔 짧은 크로스페이드였는데 두 페이지가 같은 다크 배경이라 스크롤 이동에
+   묻혀 안 보인다는 피드백 → 좌우 슬라이드 + 페이드로 바꿔 "페이지가 넘어갔다"가
+   분명히 읽히게 한다. translateX %는 스냅샷(뷰포트) 폭 기준이라 모바일에선 자동으로
+   덜 움직인다. reduced-motion이면 애니메이션 자체를 안 켠다(app.tsx에서
+   startViewTransition을 호출하지 않음 + 여기서도 이중 가드). */
 @media (prefers-reduced-motion: no-preference) {
-  @keyframes tl-page-in {
-    from {
-      opacity: 0;
-      transform: translateY(6px);
-    }
-  }
   @keyframes tl-page-out {
     to {
       opacity: 0;
-      transform: translateY(-4px);
+      transform: translateX(-3%);
+    }
+  }
+  @keyframes tl-page-in {
+    from {
+      opacity: 0;
+      transform: translateX(5%);
     }
   }
   ::view-transition-old(root) {
-    animation: tl-page-out 160ms ease both;
+    animation: tl-page-out 200ms cubic-bezier(0.4, 0, 1, 1) both;
   }
   ::view-transition-new(root) {
-    animation: tl-page-in 260ms ease both;
+    animation: tl-page-in 360ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  ::view-transition-group(root) {
+    animation-duration: 360ms;
   }
 }
 
