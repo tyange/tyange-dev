@@ -31,6 +31,14 @@ function usePageTransitions() {
   });
 
   useBeforeLeave((e) => {
+    // e.to가 string이면 링크 클릭·navigate("/path") 같은 push 이동, number(delta)면
+    // 브라우저 뒤로/앞으로다. 뒤로/앞으로에서 preventDefault + 비동기 retry를 하면
+    // 라우터가 "차단됨"으로 보고 history.go로 위치를 되돌려버려서(lifecycle.js
+    // notifyIfNotBlocked) retry가 늦게 도착할 때쯤엔 히스토리가 어긋나 있다 —
+    // 뒤로가기를 여러 번 눌러야 실제로 넘어가는 증상. 그래서 push 이동에서만 전환을
+    // 감싸고, 뒤로/앞으로는 스크롤 위치까지 즉시 복원되는 브라우저 기본 동작에 맡긴다.
+    if (typeof e.to !== "string") return;
+
     const doc = document as ViewTransitionDocument;
     if (!doc.startViewTransition || e.defaultPrevented) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
