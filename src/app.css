@@ -5,76 +5,83 @@
 @plugin "@tailwindcss/typography";
 
 /* next/font/local이 자동으로 해주던 self-host 등록을 수동 @font-face로 대체.
-   가중치·경로는 기존 app/layout.tsx의 localFont 설정과 동일하다. */
+   가중치·경로는 기존 app/layout.tsx의 localFont 설정과 동일하다.
+
+   font-display: optional — swap이면 첫 페인트에 시스템 폰트로 그려졌다가
+   Pretendard로 "휙" 바뀌는 게 보인다는 피드백. optional은 아주 짧은 블록 구간만
+   두고, 못 받으면 그 페이지 로드는 폴백으로 두되 swap을 하지 않는다(→ 눈에 보이는
+   전환 없음). 실제로 쓰는 4개 굵기(400/500/600/700)는 entry-server.tsx에서
+   <link rel="preload">로 HTML 파싱 시점에 미리 받게 해서, 대부분 첫 페인트 전에
+   도착 → 처음부터 Pretendard로 그려진다. 나머지 굵기/Monaspace는 preload 안 함. */
 @font-face {
   font-family: "Pretendard Variable";
   src: url("./fonts/pretendard/Pretendard-Thin.subset.woff2") format("woff2");
   font-weight: 100;
   font-style: normal;
-  font-display: swap;
+  font-display: optional;
 }
 @font-face {
   font-family: "Pretendard Variable";
   src: url("./fonts/pretendard/Pretendard-ExtraLight.subset.woff2") format("woff2");
   font-weight: 200;
   font-style: normal;
-  font-display: swap;
+  font-display: optional;
 }
 @font-face {
   font-family: "Pretendard Variable";
   src: url("./fonts/pretendard/Pretendard-Light.subset.woff2") format("woff2");
   font-weight: 300;
   font-style: normal;
-  font-display: swap;
+  font-display: optional;
 }
 @font-face {
   font-family: "Pretendard Variable";
   src: url("./fonts/pretendard/Pretendard-Regular.subset.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
-  font-display: swap;
+  font-display: optional;
 }
 @font-face {
   font-family: "Pretendard Variable";
   src: url("./fonts/pretendard/Pretendard-Medium.subset.woff2") format("woff2");
   font-weight: 500;
   font-style: normal;
-  font-display: swap;
+  font-display: optional;
 }
 @font-face {
   font-family: "Pretendard Variable";
   src: url("./fonts/pretendard/Pretendard-SemiBold.subset.woff2") format("woff2");
   font-weight: 600;
   font-style: normal;
-  font-display: swap;
+  font-display: optional;
 }
 @font-face {
   font-family: "Pretendard Variable";
   src: url("./fonts/pretendard/Pretendard-Bold.subset.woff2") format("woff2");
   font-weight: 700;
   font-style: normal;
-  font-display: swap;
+  font-display: optional;
 }
 @font-face {
   font-family: "Pretendard Variable";
   src: url("./fonts/pretendard/Pretendard-ExtraBold.subset.woff2") format("woff2");
   font-weight: 800;
   font-style: normal;
-  font-display: swap;
+  font-display: optional;
 }
 @font-face {
   font-family: "Pretendard Variable";
   src: url("./fonts/pretendard/Pretendard-Black.subset.woff2") format("woff2");
   font-weight: 900;
   font-style: normal;
-  font-display: swap;
+  font-display: optional;
 }
 @font-face {
   font-family: "Monaspace Neon";
   src: url("./fonts/monaspace-neon/monaspace-neon-latin-400-normal.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
-  font-display: swap;
+  font-display: optional;
 }
 
 /* 색상·간격·라디우스 등은 design-system의 --tl-* 토큰을 그대로 쓴다
