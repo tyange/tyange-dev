@@ -86,9 +86,10 @@
   box-sizing: border-box;
 }
 
-html {
-  scroll-behavior: smooth;
-}
+/* scroll-behavior: smooth를 html에 걸면 라우터가 페이지 이동 후 하는 scrollTo(0,0)까지
+   smooth로 처리돼서, 새 글이 이전 스크롤 위치에 그려졌다가 맨 위로 주르륵 올라가는 게
+   보인다. 사이트에 해시 링크·scrollIntoView가 하나도 없어 smooth가 필요한 데도 없으므로
+   그냥 뺀다 — 라우터의 top 이동은 즉시(그리고 View Transition 스냅샷 안에서) 일어난다. */
 
 body {
   min-height: 100vh;
