@@ -53,10 +53,22 @@ async function renderCareerCompany(
   return { ...company, careerItemsHtml };
 }
 
+// period 문자열("2026.08 ~", "2022.08 - 2025.12" 등)에서 시작 연·월을 뽑아
+// 비교 가능한 정수(YYYYMM)로 만든다. 못 뽑으면 0 → 맨 뒤로 밀린다.
+function careerStartOrder(period: string): number {
+  const m = period.match(/(\d{4})\s*[.\-/]\s*(\d{1,2})/);
+  return m ? Number(m[1]) * 100 + Number(m[2]) : 0;
+}
+
 async function renderCareerSection(
   career: PortfolioCareerSection,
 ): Promise<RenderedPortfolioCareerSection> {
-  const companies = await Promise.all(career.companies.map(renderCareerCompany));
+  // CMS에 입력된 순서와 무관하게 시작 시점이 최근인 회사부터 정렬한다.
+  // sort는 안정 정렬이라 시작 연·월이 같으면 원래 순서를 유지한다.
+  const ordered = [...career.companies].sort(
+    (a, b) => careerStartOrder(b.period) - careerStartOrder(a.period),
+  );
+  const companies = await Promise.all(ordered.map(renderCareerCompany));
   return { ...career, companies };
 }
 
