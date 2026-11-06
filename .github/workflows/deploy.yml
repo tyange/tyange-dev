@@ -32,7 +32,7 @@ jobs:
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             mkdir -p "${{ vars.DEPLOY_PATH }}"
             find "${{ vars.DEPLOY_PATH }}" -mindepth 1 -maxdepth 1 -exec rm -rf {} +
@@ -42,7 +42,7 @@ jobs:
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: ".output/public/*"
           target: ${{ vars.DEPLOY_PATH }}
           strip_components: 2
