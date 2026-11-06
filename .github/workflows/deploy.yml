@@ -1,0 +1,49 @@
+name: Deploy Static Export
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: deploy on aws
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build static export
+        run: bun run build
+        env:
+          CMS_API_BASE_URL: "${{ vars.CMS_API_BASE_URL || 'https://tyange.com/api/cms' }}"
+
+      - name: Prepare deploy directory
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
+          script: |
+            mkdir -p "${{ vars.DEPLOY_PATH }}"
+            find "${{ vars.DEPLOY_PATH }}" -mindepth 1 -maxdepth 1 -exec rm -rf {} +
+
+      - name: Deploy static files via SCP
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
+          source: ".output/public/*"
+          target: ${{ vars.DEPLOY_PATH }}
+          strip_components: 2
+          debug: true
